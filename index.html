@@ -1186,8 +1186,8 @@ body {
   <!-- Canvas -->
   <div class="story-editor-canvas" id="story-canvas">
     <!-- Background -->
-    <div class="story-editor-bg" id="story-bg">
-      <div class="story-bg-hint" id="story-bg-hint">
+    <div class="story-editor-bg" id="story-bg" onclick="document.getElementById('bg-file').click()">
+      <div class="story-bg-hint" id="story-bg-hint" style="pointer-events:none;">
         <div style="font-size:36px;">🖼️</div>
         <p class="b5-medium" style="color:rgba(255,255,255,0.5);">Tap to add background photo</p>
       </div>
@@ -1350,7 +1350,6 @@ function sSetMode(m) {
   });
   document.getElementById('story-chat-panel').classList.toggle('show', m === 'chat');
   document.getElementById('story-text-panel').classList.toggle('show', m === 'text');
-  if (m === 'bg') document.getElementById('bg-file').click();
 }
 
 function sEdPick(k) {
