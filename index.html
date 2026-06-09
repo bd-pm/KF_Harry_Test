@@ -587,6 +587,124 @@ body {
 }
 .color-swatch.on { border-color:rgba(255,255,255,0.8); }
 
+/* ─── iMESSAGE EDITOR ─── */
+.imsg-screen { background:#fff; }
+.imsg-header {
+  background:#fff; border-bottom:.5px solid rgba(0,0,0,0.15);
+  padding:8px 16px 10px; display:flex; align-items:center;
+  justify-content:space-between; flex-shrink:0;
+}
+.imsg-back {
+  background:none; border:none; cursor:pointer; padding:0;
+  display:flex; align-items:center; gap:3px; color:#007AFF;
+  font-family:inherit; font-size:17px; font-weight:400; letter-spacing:0;
+  -webkit-tap-highlight-color:transparent;
+}
+.imsg-contact {
+  display:flex; flex-direction:column; align-items:center; gap:3px; flex:1;
+}
+.imsg-av {
+  width:36px; height:36px; border-radius:50%;
+  background:linear-gradient(135deg,#FF4E8B,#B24BF3);
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:700; color:#fff; cursor:pointer;
+  overflow:hidden;
+}
+.imsg-name-inp {
+  background:none; border:none; outline:none;
+  font-family:inherit; font-weight:600; font-size:13px;
+  color:#000; text-align:center; letter-spacing:0;
+  font-feature-settings:'case' 1,'cpsp' 1,'ss03' 1;
+  width:130px;
+}
+.imsg-icons { display:flex; gap:16px; }
+.imsg-icon-btn {
+  background:none; border:none; cursor:pointer;
+  color:#007AFF; padding:0; -webkit-tap-highlight-color:transparent;
+}
+.imsg-msgs {
+  flex:1; overflow-y:auto; padding:16px 12px;
+  display:flex; flex-direction:column; gap:3px;
+  background:#fff; -webkit-overflow-scrolling:touch;
+}
+.imsg-ts {
+  text-align:center; font-size:11px; color:#8E8E93;
+  font-weight:400; margin:8px 0 4px; letter-spacing:0;
+}
+.imsg-row { display:flex; flex-direction:column; margin-bottom:2px; }
+.imsg-row.sent { align-items:flex-end; }
+.imsg-row.recv { align-items:flex-start; flex-direction:row; gap:6px; align-items:flex-end; }
+.imsg-recv-av {
+  width:24px; height:24px; border-radius:50%;
+  background:linear-gradient(135deg,#FF4E8B,#B24BF3);
+  display:flex; align-items:center; justify-content:center;
+  font-size:9px; font-weight:700; color:#fff; flex-shrink:0;
+  overflow:hidden;
+}
+.imsg-bub {
+  padding:8px 12px; border-radius:18px; max-width:240px;
+  font-size:15px; line-height:1.35; word-break:break-word;
+  letter-spacing:0;
+}
+.imsg-bub.sent { background:#0B93F6; color:#fff; border-bottom-right-radius:4px; }
+.imsg-bub.recv { background:#E9E9EB; color:#000; border-bottom-left-radius:4px; }
+/* Tail shapes */
+.imsg-bub.sent.tail { border-bottom-right-radius:4px; }
+.imsg-bub.recv.tail { border-bottom-left-radius:4px; }
+.imsg-status { font-size:11px; color:#8E8E93; margin-top:2px; padding-right:4px; letter-spacing:0; }
+/* Who toggle pill */
+.imsg-who-bar {
+  flex-shrink:0; background:#fff;
+  padding:6px 16px 4px;
+  display:flex; align-items:center; gap:6px;
+}
+.imsg-who-pill {
+  display:flex; border-radius:20px; overflow:hidden;
+  border:1px solid #E5E5EA;
+}
+.imsg-who-opt {
+  padding:4px 14px; font-size:12px; font-weight:600;
+  background:none; border:none; cursor:pointer;
+  font-family:inherit; letter-spacing:0; color:#8E8E93;
+  transition:all .15s;
+  font-feature-settings:'case' 1,'cpsp' 1,'ss03' 1;
+}
+.imsg-who-opt.on { background:#0B93F6; color:#fff; }
+/* Input bar */
+.imsg-input-bar {
+  flex-shrink:0; background:#fff;
+  border-top:.5px solid rgba(0,0,0,0.15);
+  padding:8px 12px 28px;
+  display:flex; align-items:flex-end; gap:8px;
+}
+.imsg-input-wrap {
+  flex:1; display:flex; align-items:flex-end;
+  border:1px solid #C7C7CC; border-radius:20px;
+  background:#fff; padding:6px 10px 6px 14px;
+  min-height:36px;
+}
+.imsg-textarea {
+  flex:1; background:none; border:none; outline:none;
+  font-family:inherit; font-size:15px; color:#000; letter-spacing:0;
+  resize:none; line-height:1.4; max-height:88px;
+  font-feature-settings:'case' 1,'cpsp' 1,'ss03' 1;
+}
+.imsg-textarea::placeholder { color:#C7C7CC; }
+.imsg-send-btn {
+  width:28px; height:28px; border-radius:50%;
+  background:#C7C7CC; border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .15s; flex-shrink:0;
+  -webkit-tap-highlight-color:transparent;
+}
+.imsg-send-btn.active { background:#0B93F6; }
+.imsg-post-btn {
+  background:none; border:none; cursor:pointer;
+  font-family:inherit; font-feature-settings:'case' 1,'cpsp' 1,'ss03' 1;
+  color:#007AFF; font-size:17px; font-weight:600; letter-spacing:0;
+  -webkit-tap-highlight-color:transparent;
+}
+
 /* TOAST */
 #toast {
   position:fixed; bottom:84px;
@@ -989,44 +1107,54 @@ body {
   </div>
 </div>
 
-<!-- ══ SCREEN 4: EDITOR ══ -->
-<div class="screen" id="s-editor">
-  <div class="topbar">
-    <button class="topbar-back" onclick="go('s-create',0)">
-      <svg width="9" height="15" fill="none" viewBox="0 0 9 15"><path d="M7.5 1.5l-6 6 6 6" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<!-- ══ SCREEN 4: iMESSAGE EDITOR ══ -->
+<div class="screen imsg-screen" id="s-editor">
+
+  <!-- iMessage Header -->
+  <div class="imsg-header">
+    <button class="imsg-back" onclick="go('s-create',0)">
+      <svg width="10" height="17" fill="none" viewBox="0 0 10 17"><path d="M8.5 1.5l-7 7 7 7" stroke="#007AFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
-    <span class="t2-bold" style="color:var(--text-1);">iMessage</span>
-    <button class="t4-bold" style="background:none;border:none;cursor:pointer;font-family:inherit;font-feature-settings:'case' 1,'cpsp' 1,'ss03' 1;letter-spacing:0;" onclick="go('s-detail',1)">
-      <span style="background:var(--accent-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Post</span>
+    <div class="imsg-contact">
+      <div class="imsg-av" id="imsg-av" onclick="document.getElementById('imsg-av-file').click()">S</div>
+      <input class="imsg-name-inp" id="artist-name" type="text" value="Seonghyeon" maxlength="20" placeholder="Artist name">
+      <span style="font-size:11px;color:#8E8E93;letter-spacing:0;">iMessage</span>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <button class="imsg-icon-btn">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" stroke="#007AFF" stroke-width="1.8"/></svg>
+      </button>
+      <button class="imsg-post-btn" onclick="go('s-detail',1)">Post</button>
+    </div>
+  </div>
+  <input type="file" id="imsg-av-file" accept="image/*" style="display:none" onchange="imsgSetAv(this)">
+
+  <!-- Messages -->
+  <div class="imsg-msgs" id="editor-msgs">
+    <div class="imsg-ts">Today</div>
+    <div style="text-align:center;padding:24px 0 8px;">
+      <span style="font-size:13px;color:#C7C7CC;letter-spacing:0;">Start writing your story ✍️</span>
+    </div>
+  </div>
+
+  <!-- Who toggle -->
+  <div class="imsg-who-bar">
+    <span style="font-size:12px;color:#8E8E93;letter-spacing:0;">Speaking as</span>
+    <div class="imsg-who-pill">
+      <button class="imsg-who-opt on" id="ed-tab-a" onclick="edPick('a')">You</button>
+      <button class="imsg-who-opt" id="ed-tab-b" onclick="edPick('b')" id="imsg-tab-b">Seonghyeon</button>
+    </div>
+  </div>
+
+  <!-- Input bar -->
+  <div class="imsg-input-bar">
+    <button style="width:32px;height:32px;border-radius:50%;background:#E9E9EB;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="#8E8E93" stroke-width="2.2" stroke-linecap="round"/></svg>
     </button>
-  </div>
-
-  <!-- Artist setup -->
-  <div style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;">
-    <div style="width:40px;height:40px;border-radius:50%;background:var(--accent-grad);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;cursor:pointer;" onclick="toast('사진 업로드 기능은 베타 후 오픈돼요 📸')">S</div>
-    <div style="flex:1;">
-      <input class="dark-input b4-medium" style="height:36px;" type="text" id="artist-name" value="Seonghyeon" placeholder="Artist name">
-    </div>
-    <div style="font-size:20px;cursor:pointer;" onclick="toast('배경 이미지 업로드 기능은 베타 후 오픈돼요 🖼️')">🖼️</div>
-  </div>
-
-  <!-- Chat preview -->
-  <div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:linear-gradient(160deg,#0f0c1a 0%,#1a0f2e 40%,#0d1520 100%);" id="editor-msgs">
-    <div style="text-align:center;padding:20px 0;">
-      <span class="c2-medium" style="color:rgba(255,255,255,0.2);">Start writing your story below ✍️</span>
-    </div>
-  </div>
-
-  <!-- Input -->
-  <div style="flex-shrink:0;background:var(--surface);border-top:1px solid var(--border);padding:10px 16px 28px;">
-    <div style="display:flex;gap:8px;margin-bottom:10px;">
-      <button class="who-tab t5-bold on" id="ed-tab-a" onclick="edPick('a')" style="height:32px;border-radius:8px;border:1.5px solid var(--border-md);background:var(--accent);color:#fff;flex:1;font-family:inherit;font-feature-settings:'case' 1,'cpsp' 1,'ss03' 1;cursor:pointer;letter-spacing:0;transition:all .15s;">You</button>
-      <button class="who-tab t5-bold" id="ed-tab-b" onclick="edPick('b')" style="height:32px;border-radius:8px;border:1.5px solid var(--border-md);background:transparent;color:var(--text-3);flex:1;font-family:inherit;font-feature-settings:'case' 1,'cpsp' 1,'ss03' 1;cursor:pointer;letter-spacing:0;transition:all .15s;" id="ed-tab-b-el">Seonghyeon</button>
-    </div>
-    <div style="display:flex;gap:8px;align-items:flex-end;">
-      <textarea class="dark-input b4-regular" id="ed-input" placeholder="Type a message…" rows="1" style="height:40px;border-radius:20px;padding:10px 16px;resize:none;line-height:1.4;max-height:88px;" oninput="autoGrow(this)"></textarea>
-      <button onclick="edSend()" style="width:40px;height:40px;border-radius:50%;border:none;background:var(--accent-grad);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M7 11V3M3 7l4-4 4 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="imsg-input-wrap">
+      <textarea class="imsg-textarea" id="ed-input" placeholder="iMessage" rows="1" oninput="autoGrow(this);imsgInputChange(this)"></textarea>
+      <button class="imsg-send-btn" id="imsg-send-btn" onclick="edSend()">
+        <svg width="13" height="13" fill="none" viewBox="0 0 14 14"><path d="M7 11V3M3 7l4-4 4 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
     </div>
   </div>
@@ -1275,33 +1403,44 @@ function go(id, fwd) {
   setTimeout(() => next.classList.remove('enter','back'), 300);
 }
 
-// Editor
+// ─── iMESSAGE EDITOR ────────────────
 let edWho = 'a';
 const edMsgs = [];
 
 function edPick(k) {
   edWho = k;
-  const tabA = document.getElementById('ed-tab-a');
-  const tabB = document.getElementById('ed-tab-b');
-  if (k === 'a') {
-    tabA.style.background = 'var(--accent)'; tabA.style.color = '#fff'; tabA.style.borderColor = 'var(--accent)';
-    tabB.style.background = 'transparent'; tabB.style.color = 'var(--text-3)'; tabB.style.borderColor = 'var(--border-md)';
-  } else {
-    tabB.style.background = 'rgba(255,255,255,0.15)'; tabB.style.color = '#fff'; tabB.style.borderColor = 'rgba(255,255,255,0.2)';
-    tabA.style.background = 'transparent'; tabA.style.color = 'var(--text-3)'; tabA.style.borderColor = 'var(--border-md)';
-  }
+  const a = document.getElementById('ed-tab-a');
+  const b = document.getElementById('ed-tab-b');
+  a.classList.toggle('on', k === 'a');
+  b.classList.toggle('on', k === 'b');
+  // sync artist tab label
+  const name = document.getElementById('artist-name').value || 'Artist';
+  b.textContent = name;
 }
 
 document.getElementById('ed-input').addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); edSend(); }
 });
 
+function imsgInputChange(el) {
+  const btn = document.getElementById('imsg-send-btn');
+  btn.classList.toggle('active', el.value.trim().length > 0);
+}
+
+function imsgSetAv(input) {
+  const file = input.files[0]; if (!file) return;
+  const url = URL.createObjectURL(file);
+  document.getElementById('imsg-av').innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+}
+
 function edSend() {
   const inp = document.getElementById('ed-input');
   const txt = inp.value.trim();
   if (!txt) return;
-  edMsgs.push({ who: edWho, txt });
+  const artistName = document.getElementById('artist-name').value || 'Artist';
+  edMsgs.push({ who: edWho, txt, artist: artistName });
   inp.value = ''; inp.style.height = 'auto';
+  document.getElementById('imsg-send-btn').classList.remove('active');
   renderEditor();
   const area = document.getElementById('editor-msgs');
   setTimeout(() => area.scrollTop = area.scrollHeight, 40);
@@ -1309,25 +1448,49 @@ function edSend() {
 
 function renderEditor() {
   const area = document.getElementById('editor-msgs');
-  area.innerHTML = '';
-  const artistName = document.getElementById('artist-name').value || 'Artist';
+  area.innerHTML = '<div class="imsg-ts">Today</div>';
   if (edMsgs.length === 0) {
-    area.innerHTML = '<div style="text-align:center;padding:20px 0;"><span style="font-size:12px;color:rgba(255,255,255,0.2);">Start writing your story below ✍️</span></div>';
+    area.innerHTML += '<div style="text-align:center;padding:24px 0 8px;"><span style="font-size:13px;color:#C7C7CC;letter-spacing:0;">Start writing your story ✍️</span></div>';
     return;
   }
-  edMsgs.forEach(m => {
-    const isA = m.who === 'a';
-    const wrap = document.createElement('div');
-    wrap.style.cssText = `display:flex;flex-direction:column;${isA ? 'align-items:flex-end' : 'align-items:flex-start'};margin-bottom:8px;`;
-    const name = document.createElement('div');
-    name.style.cssText = 'font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:3px;padding:0 4px;';
-    name.textContent = isA ? 'you' : artistName;
-    const bub = document.createElement('div');
-    bub.style.cssText = `padding:10px 14px;border-radius:16px;max-width:240px;font-size:14px;line-height:1.4;word-break:break-word;${isA ? 'background:rgba(255,255,255,0.88);color:#191919;border-bottom-right-radius:3px;' : 'background:rgba(255,255,255,0.13);backdrop-filter:blur(10px);color:#fff;border-bottom-left-radius:3px;'}`;
-    bub.textContent = m.txt;
-    wrap.appendChild(name);
-    wrap.appendChild(bub);
-    area.appendChild(wrap);
+  edMsgs.forEach((m, i) => {
+    const isSent = m.who === 'a';
+    const isLast = i === edMsgs.length - 1;
+    const prevSame = i > 0 && edMsgs[i-1].who === m.who;
+
+    if (isSent) {
+      const row = document.createElement('div');
+      row.className = 'imsg-row sent';
+      const bub = document.createElement('div');
+      bub.className = 'imsg-bub sent' + (isLast ? ' tail' : '');
+      bub.textContent = m.txt;
+      row.appendChild(bub);
+      if (isLast) {
+        const status = document.createElement('div');
+        status.className = 'imsg-status';
+        status.textContent = 'Delivered';
+        row.appendChild(status);
+      }
+      area.appendChild(row);
+    } else {
+      const row = document.createElement('div');
+      row.className = 'imsg-row recv';
+      if (!prevSame) {
+        const av = document.createElement('div');
+        av.className = 'imsg-recv-av';
+        av.textContent = (m.artist || 'A')[0].toUpperCase();
+        row.appendChild(av);
+      } else {
+        const spacer = document.createElement('div');
+        spacer.style.cssText = 'width:24px;flex-shrink:0;';
+        row.appendChild(spacer);
+      }
+      const bub = document.createElement('div');
+      bub.className = 'imsg-bub recv' + (isLast ? ' tail' : '');
+      bub.textContent = m.txt;
+      row.appendChild(bub);
+      area.appendChild(row);
+    }
   });
 }
 
