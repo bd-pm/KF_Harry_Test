@@ -489,6 +489,104 @@ body {
   background:var(--base); display:flex; gap:8px;
 }
 
+/* ─────────────────────────────────────
+   IG STORY EDITOR
+───────────────────────────────────── */
+.story-editor-canvas {
+  flex:1; position:relative; overflow:hidden; width:100%; background:#000;
+  cursor:pointer;
+}
+.story-editor-bg {
+  position:absolute; inset:0;
+  background-size:cover; background-position:center; background-color:#111;
+  transition:background-image .2s;
+}
+.story-bg-hint {
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:8px;
+  pointer-events:none;
+}
+.story-editor-grad {
+  position:absolute; inset:0;
+  background:linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, transparent 35%, transparent 55%, rgba(0,0,0,0.7) 100%);
+  pointer-events:none; z-index:2;
+}
+.story-profile-bar {
+  position:absolute; top:0; left:0; right:0;
+  padding:12px 14px; display:flex; align-items:center; gap:8px;
+  z-index:5; pointer-events:all;
+}
+.story-av-btn {
+  width:32px; height:32px; border-radius:50%;
+  border:1.5px solid rgba(255,255,255,0.6); overflow:hidden;
+  cursor:pointer; flex-shrink:0; display:flex;
+  align-items:center; justify-content:center;
+  font-size:13px; font-weight:700; color:#fff;
+  background:linear-gradient(135deg,#FF4E8B,#B24BF3);
+  -webkit-tap-highlight-color:transparent;
+}
+.story-name-inp {
+  background:transparent; border:none; outline:none;
+  color:#fff; font-family:inherit; font-weight:700; font-size:13px;
+  border-bottom:1px solid rgba(255,255,255,0.35); width:110px;
+  letter-spacing:0; font-feature-settings:'case' 1,'cpsp' 1,'ss03' 1;
+}
+.story-chat-layer {
+  position:absolute; bottom:20px; left:0; right:0;
+  display:flex; flex-direction:column; gap:8px;
+  padding:0 16px; z-index:4; pointer-events:none;
+}
+.story-bub-recv {
+  display:inline-block; padding:9px 13px; border-radius:14px;
+  border-bottom-left-radius:3px;
+  background:rgba(255,255,255,0.14); backdrop-filter:blur(8px);
+  color:#fff; max-width:260px; word-break:break-word;
+}
+.story-bub-sent {
+  display:inline-block; padding:9px 13px; border-radius:14px;
+  border-bottom-right-radius:3px;
+  background:rgba(255,255,255,0.9); color:#191919;
+  max-width:260px; word-break:break-word; align-self:flex-end;
+}
+.story-stickers-layer {
+  position:absolute; inset:0; z-index:6; pointer-events:none;
+}
+.story-sticker {
+  position:absolute; cursor:grab; pointer-events:all;
+  font-weight:800; font-size:20px;
+  text-shadow:0 1px 10px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.6);
+  white-space:nowrap; user-select:none; touch-action:none;
+  padding:2px 6px;
+}
+.story-sticker.sel { outline:1.5px dashed rgba(255,255,255,0.5); border-radius:4px; }
+.story-toolbar {
+  flex-shrink:0; background:var(--surface);
+  border-top:1px solid var(--border);
+  display:flex; align-items:center;
+}
+.smode-btn {
+  flex:1; height:52px; background:none; border:none; cursor:pointer;
+  font-family:inherit; font-feature-settings:'case' 1,'cpsp' 1,'ss03' 1;
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:3px; color:var(--text-3);
+  transition:color .15s; letter-spacing:0;
+  -webkit-tap-highlight-color:transparent;
+}
+.smode-btn.on { color:var(--accent); }
+.smode-btn:active { opacity:.6; }
+.story-panel {
+  flex-shrink:0; background:var(--surface);
+  border-top:1px solid var(--border);
+  padding:12px 16px 28px; display:none;
+}
+.story-panel.show { display:block; }
+.color-swatch {
+  width:28px; height:28px; border-radius:50%; cursor:pointer;
+  border:2px solid transparent; transition:border-color .12s;
+  flex-shrink:0; -webkit-tap-highlight-color:transparent;
+}
+.color-swatch.on { border-color:rgba(255,255,255,0.8); }
+
 /* TOAST */
 #toast {
   position:fixed; bottom:84px;
@@ -811,7 +909,7 @@ body {
       </div>
 
       <!-- IG Story -->
-      <div class="tmpl-card" onclick="go('s-editor',1)">
+      <div class="tmpl-card" onclick="go('s-editor-story',1)">
         <div class="tmpl-preview">
           <div class="prev-story">
             <div class="prev-story-head">
@@ -1073,6 +1171,97 @@ body {
   </div>
 </div>
 
+<!-- ══ IG STORY EDITOR ══ -->
+<div class="screen" id="s-editor-story">
+  <div class="topbar" style="background:var(--base);flex-shrink:0;">
+    <button class="topbar-back" onclick="go('s-create',0)">
+      <svg width="9" height="15" fill="none" viewBox="0 0 9 15"><path d="M7.5 1.5l-6 6 6 6" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <span class="t2-bold" style="color:var(--text-1);">IG Story</span>
+    <button class="t4-bold" style="background:none;border:none;cursor:pointer;font-family:inherit;font-feature-settings:'case' 1,'cpsp' 1,'ss03' 1;letter-spacing:0;" onclick="go('s-detail',1)">
+      <span style="background:var(--accent-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Post</span>
+    </button>
+  </div>
+
+  <!-- Canvas -->
+  <div class="story-editor-canvas" id="story-canvas">
+    <!-- Background -->
+    <div class="story-editor-bg" id="story-bg">
+      <div class="story-bg-hint" id="story-bg-hint">
+        <div style="font-size:36px;">🖼️</div>
+        <p class="b5-medium" style="color:rgba(255,255,255,0.5);">Tap to add background photo</p>
+      </div>
+    </div>
+    <!-- Gradient overlay -->
+    <div class="story-editor-grad"></div>
+    <!-- Profile bar -->
+    <div class="story-profile-bar">
+      <div class="story-av-btn" id="story-av-btn" onclick="document.getElementById('av-file').click()">J</div>
+      <input class="story-name-inp" id="story-name-inp" type="text" value="jungkook" maxlength="20">
+      <span style="font-size:11px;font-weight:500;color:rgba(255,255,255,0.45);letter-spacing:0;">· now</span>
+    </div>
+    <!-- Text stickers -->
+    <div class="story-stickers-layer" id="story-stickers"></div>
+    <!-- Chat bubbles -->
+    <div class="story-chat-layer" id="story-chat-layer"></div>
+  </div>
+
+  <!-- Mode toolbar -->
+  <div class="story-toolbar">
+    <button class="smode-btn on" id="smode-bg" onclick="sSetMode('bg')">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><polyline points="21 15 16 10 5 21" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      <span class="c2-medium">BG</span>
+    </button>
+    <button class="smode-btn" id="smode-chat" onclick="sSetMode('chat')">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="1.8"/></svg>
+      <span class="c2-medium">Chat</span>
+    </button>
+    <button class="smode-btn" id="smode-text" onclick="sSetMode('text')">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><polyline points="4 7 4 4 20 4 20 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="9" y1="20" x2="15" y2="20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="4" x2="12" y2="20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span class="c2-medium">Text</span>
+    </button>
+  </div>
+
+  <!-- Chat panel -->
+  <div class="story-panel" id="story-chat-panel">
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <button id="sed-tab-a" onclick="sEdPick('a')" style="height:32px;border-radius:8px;border:1.5px solid var(--border-md);background:var(--accent);color:#fff;flex:1;font-family:inherit;font-feature-settings:'case' 1,'cpsp' 1,'ss03' 1;cursor:pointer;letter-spacing:0;font-size:13px;font-weight:700;transition:all .15s;">You</button>
+      <button id="sed-tab-b" onclick="sEdPick('b')" style="height:32px;border-radius:8px;border:1.5px solid var(--border-md);background:transparent;color:var(--text-3);flex:1;font-family:inherit;font-feature-settings:'case' 1,'cpsp' 1,'ss03' 1;cursor:pointer;letter-spacing:0;font-size:13px;font-weight:700;transition:all .15s;" id="sed-tab-b">Artist</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <input class="dark-input b4-regular" id="s-chat-inp" type="text" placeholder="Type a message…" style="height:40px;border-radius:20px;padding:0 16px;flex:1;" onkeydown="if(event.key==='Enter')sSend()">
+      <button onclick="sSend()" style="width:40px;height:40px;border-radius:50%;border:none;background:var(--accent-grad);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M7 11V3M3 7l4-4 4 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Text panel -->
+  <div class="story-panel" id="story-text-panel">
+    <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center;">
+      <div class="color-swatch on" data-color="#FFFFFF" style="background:#FFFFFF;" onclick="sPickColor(this,'#FFFFFF')"></div>
+      <div class="color-swatch" data-color="#FFE44D" style="background:#FFE44D;" onclick="sPickColor(this,'#FFE44D')"></div>
+      <div class="color-swatch" data-color="#FF4E8B" style="background:#FF4E8B;" onclick="sPickColor(this,'#FF4E8B')"></div>
+      <div class="color-swatch" data-color="#4BF3B2" style="background:#4BF3B2;" onclick="sPickColor(this,'#4BF3B2')"></div>
+      <div class="color-swatch" style="background:#191919;border:2px solid rgba(255,255,255,0.2);" onclick="sPickColor(this,'#191919')"></div>
+      <div style="display:flex;gap:4px;margin-left:auto;">
+        <button onclick="sStickerSize(-1)" style="width:28px;height:28px;border-radius:6px;border:1.5px solid var(--border-md);background:transparent;color:var(--text-2);font-family:inherit;cursor:pointer;font-size:12px;font-weight:700;letter-spacing:0;">S</button>
+        <button onclick="sStickerSize(1)"  style="width:28px;height:28px;border-radius:6px;border:1.5px solid var(--border-md);background:transparent;color:var(--text-2);font-family:inherit;cursor:pointer;font-size:16px;font-weight:700;letter-spacing:0;">A</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <input class="dark-input b4-regular" id="story-text-inp" type="text" placeholder="Type text for your story…" style="height:40px;border-radius:20px;padding:0 16px;flex:1;" onkeydown="if(event.key==='Enter')sAddText()">
+      <button onclick="sAddText()" style="width:40px;height:40px;border-radius:50%;border:none;background:var(--accent-grad);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;flex-shrink:0;">
+        <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Hidden file inputs -->
+  <input type="file" id="bg-file" accept="image/*" style="display:none" onchange="sBgImg(this)">
+  <input type="file" id="av-file" accept="image/*" style="display:none" onchange="sAvImg(this)">
+</div>
+
 <div id="toast" class="b5-medium"></div>
 
 <script>
@@ -1145,6 +1334,161 @@ function renderEditor() {
 function autoGrow(el) {
   el.style.height = 'auto';
   el.style.height = Math.min(el.scrollHeight, 88) + 'px';
+}
+
+// ─── IG STORY EDITOR ────────────────
+let sCurMode = 'bg';
+let sWho = 'a';
+const sMsgs = [];
+let sStickerColor = '#FFFFFF';
+let sStickerFontSize = 20;
+
+function sSetMode(m) {
+  sCurMode = m;
+  ['bg','chat','text'].forEach(k => {
+    document.getElementById('smode-'+k).classList.toggle('on', k === m);
+  });
+  document.getElementById('story-chat-panel').classList.toggle('show', m === 'chat');
+  document.getElementById('story-text-panel').classList.toggle('show', m === 'text');
+  if (m === 'bg') document.getElementById('bg-file').click();
+}
+
+function sEdPick(k) {
+  sWho = k;
+  const a = document.getElementById('sed-tab-a');
+  const b = document.getElementById('sed-tab-b');
+  if (k === 'a') {
+    a.style.background='var(--accent)'; a.style.color='#fff'; a.style.borderColor='var(--accent)';
+    b.style.background='transparent'; b.style.color='var(--text-3)'; b.style.borderColor='var(--border-md)';
+  } else {
+    b.style.background='rgba(255,255,255,0.15)'; b.style.color='#fff'; b.style.borderColor='rgba(255,255,255,0.2)';
+    a.style.background='transparent'; a.style.color='var(--text-3)'; a.style.borderColor='var(--border-md)';
+  }
+}
+
+function sSend() {
+  const inp = document.getElementById('s-chat-inp');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  const artistName = document.getElementById('story-name-inp').value || 'Artist';
+  sMsgs.push({ who: sWho, txt, artist: artistName });
+  inp.value = '';
+  renderStoryChat();
+}
+
+function renderStoryChat() {
+  const layer = document.getElementById('story-chat-layer');
+  layer.innerHTML = '';
+  sMsgs.forEach(m => {
+    const isA = m.who === 'a';
+    const wrap = document.createElement('div');
+    wrap.style.cssText = `display:flex;flex-direction:column;${isA ? 'align-items:flex-end' : 'align-items:flex-start'};gap:3px;`;
+    const name = document.createElement('div');
+    name.style.cssText = 'font-size:10px;color:rgba(255,255,255,0.35);padding:0 4px;letter-spacing:0;';
+    name.textContent = isA ? 'you' : m.artist;
+    const bub = document.createElement('div');
+    bub.className = isA ? 'story-bub-sent b4-regular' : 'story-bub-recv b4-regular';
+    bub.textContent = m.txt;
+    wrap.appendChild(name);
+    wrap.appendChild(bub);
+    layer.appendChild(wrap);
+  });
+}
+
+function sBgImg(input) {
+  const file = input.files[0]; if (!file) return;
+  const url = URL.createObjectURL(file);
+  const bg = document.getElementById('story-bg');
+  bg.style.backgroundImage = `url(${url})`;
+  document.getElementById('story-bg-hint').style.display = 'none';
+  // reset mode back to chat after picking BG
+  sCurMode = 'bg';
+  document.getElementById('smode-bg').classList.add('on');
+  document.getElementById('story-chat-panel').classList.remove('show');
+  document.getElementById('story-text-panel').classList.remove('show');
+}
+
+function sAvImg(input) {
+  const file = input.files[0]; if (!file) return;
+  const url = URL.createObjectURL(file);
+  document.getElementById('story-av-btn').innerHTML =
+    `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+}
+
+function sPickColor(el, color) {
+  sStickerColor = color;
+  document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function sStickerSize(dir) {
+  sStickerFontSize = Math.max(12, Math.min(40, sStickerFontSize + dir * 6));
+}
+
+function sAddText() {
+  const inp = document.getElementById('story-text-inp');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  const canvas = document.getElementById('story-canvas');
+  const cx = canvas.offsetWidth / 2;
+  const cy = canvas.offsetHeight * 0.4;
+  addSticker(txt, sStickerColor, sStickerFontSize, cx, cy);
+  inp.value = '';
+}
+
+function addSticker(txt, color, size, cx, cy) {
+  const layer = document.getElementById('story-stickers');
+  layer.style.pointerEvents = 'all';
+  const el = document.createElement('div');
+  el.className = 'story-sticker';
+  el.textContent = txt;
+  el.style.color = color;
+  el.style.fontSize = size + 'px';
+  el.style.left = '-9999px'; el.style.top = '-9999px';
+  layer.appendChild(el);
+  const w = el.offsetWidth, h = el.offsetHeight;
+  el.style.left = (cx - w / 2) + 'px';
+  el.style.top  = (cy - h / 2) + 'px';
+  makeDraggable(el);
+  el.addEventListener('click', e => {
+    e.stopPropagation();
+    layer.querySelectorAll('.story-sticker').forEach(s => s.classList.remove('sel'));
+    el.classList.add('sel');
+  });
+  document.getElementById('story-canvas').addEventListener('click', () => {
+    layer.querySelectorAll('.story-sticker').forEach(s => s.classList.remove('sel'));
+  }, { once: false });
+}
+
+function makeDraggable(el) {
+  let sx, sy, il, it;
+  const onStart = e => {
+    const t = e.touches ? e.touches[0] : e;
+    sx = t.clientX; sy = t.clientY;
+    il = parseInt(el.style.left)||0;
+    it = parseInt(el.style.top)||0;
+    el.style.cursor = 'grabbing';
+    el.classList.add('sel');
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onEnd);
+    document.addEventListener('touchmove', onMove, {passive:false});
+    document.addEventListener('touchend', onEnd);
+  };
+  const onMove = e => {
+    if (e.cancelable) e.preventDefault();
+    const t = e.touches ? e.touches[0] : e;
+    el.style.left = (il + t.clientX - sx) + 'px';
+    el.style.top  = (it + t.clientY - sy) + 'px';
+  };
+  const onEnd = () => {
+    el.style.cursor = 'grab';
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onEnd);
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend', onEnd);
+  };
+  el.addEventListener('mousedown', onStart);
+  el.addEventListener('touchstart', onStart, {passive:true});
 }
 
 // Toast
