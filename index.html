@@ -479,16 +479,14 @@ body {
 .btn-start {
   width:100%; padding:17px 0;
   border:none; border-radius:50px;
-  background:rgba(255,255,255,0.12);
-  color:#fff; cursor:pointer;
+  background:#6FDBFF;
+  color:#000; cursor:pointer;
   font-family:inherit;
   font-feature-settings:'case' 1,'cpsp' 1,'ss03' 1;
-  backdrop-filter:blur(12px);
-  border:1px solid rgba(255,255,255,0.18);
   transition:background .2s ease, transform .15s ease;
   letter-spacing:0;
 }
-.btn-start:hover { background:rgba(255,255,255,0.18); }
+.btn-start:hover { background:#8de5ff; }
 .btn-start:active { transform:scale(0.97); }
 
 /* full-width gradient button */
@@ -1234,7 +1232,6 @@ body {
       </svg>
     </div>
     <p style="font-family:inherit;font-weight:800;font-size:36px;color:#fff;line-height:1.05;letter-spacing:-0.5px;margin-top:20px;">Create your<br>POV</p>
-    <p style="color:rgba(255,255,255,0.38);margin-top:10px;font-size:13px;font-weight:400;letter-spacing:0;">Swipe to pick a template</p>
   </div>
 
   <!-- 캐러셀 -->
@@ -1299,14 +1296,6 @@ body {
   <!-- 템플릿 정보 + CTA -->
   <div style="position:relative;z-index:2;padding:0 24px 20px;flex-shrink:0;">
     <!-- 템플릿 이름 + 설명 -->
-    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;">
-      <span id="csl-name" style="font-family:inherit;font-weight:800;font-size:22px;color:#fff;letter-spacing:-0.2px;">Chat</span>
-      <!-- 닷 인디케이터 -->
-      <div style="display:flex;gap:5px;align-items:center;" id="csl-dots">
-        <div class="csl-dot on"></div>
-        <div class="csl-dot"></div>
-      </div>
-    </div>
     <button class="btn-start t1-bold" id="csl-cta" onclick="cslGo()" style="font-family:inherit;font-weight:800;font-size:17px;">Start →</button>
   </div>
 
