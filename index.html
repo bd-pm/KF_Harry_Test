@@ -1374,7 +1374,7 @@ body {
     <span class="c1-medium" style="color:#8E8E93;letter-spacing:0;">as</span>
     <div class="imsg-who-pill">
       <button class="imsg-who-opt on" id="ed-tab-a" onclick="edPick('a')">You</button>
-      <button class="imsg-who-opt" id="ed-tab-b" onclick="edPick('b')">Name</button>
+      <button class="imsg-who-opt" id="ed-tab-b" onclick="edPick('b')">Artist</button>
     </div>
   </div>
   <!-- 레거시 tmpl-bar (JS 참조 호환용, 숨김) -->
@@ -1729,7 +1729,7 @@ function edAddImg(input) {
 }
 
 function syncArtistName(val) {
-  const name = val.trim() || 'Name';
+  const name = val.trim() || 'Artist';
   document.getElementById('ed-tab-b').textContent = name;
 }
 
