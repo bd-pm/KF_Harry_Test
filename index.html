@@ -260,12 +260,12 @@ body {
 .profile-header { position:relative; }
 .profile-cover {
   width:100%; height:160px;
-  background:linear-gradient(135deg, #000d10 0%, #001a22 50%, #000d10 100%);
+  background:linear-gradient(135deg, #080808 0%, #0a0a0a 50%, #080808 100%);
   overflow:hidden; position:relative;
 }
 .profile-cover-glow {
   position:absolute; inset:0;
-  background:radial-gradient(ellipse at 60% 40%, rgba(111,219,255,0.3) 0%, transparent 70%);
+  background:radial-gradient(ellipse at 60% 40%, rgba(111,219,255,0.0) 0%, transparent 70%);
 }
 .profile-av-area {
   padding:0 20px; margin-top:-28px; position:relative; z-index:2;
@@ -372,7 +372,7 @@ body {
 /* IG Story preview */
 .prev-story {
   height:100%;
-  background:linear-gradient(155deg,#000000 0%,#001218 55%,#000d14 100%);
+  background:linear-gradient(155deg,#000000 0%,#0a0a0a 55%,#080808 100%);
   padding:12px; display:flex; flex-direction:column; position:relative;
 }
 .prev-story-head { display:flex; align-items:center; gap:6px; margin-bottom:auto; }
@@ -510,7 +510,7 @@ body {
 .detail-image-placeholder {
   width:calc(100% - 24px); aspect-ratio:9/16;
   margin:12px auto 0;
-  background:linear-gradient(155deg,#000000 0%,#001218 55%,#000d14 100%);
+  background:linear-gradient(155deg,#000000 0%,#0a0a0a 55%,#080808 100%);
   border-radius:16px;
   display:flex; align-items:center; justify-content:center;
   flex-direction:column; gap:12px; position:relative; overflow:hidden;
@@ -914,7 +914,7 @@ body {
 #editor-portrait-zone {
   flex-shrink:0; display:none;
   height:180px; position:relative; overflow:hidden;
-  background:linear-gradient(160deg,#000000,#001218,#000d14);
+  background:linear-gradient(160deg,#000000,#0a0a0a,#080808);
   cursor:pointer;
 }
 #editor-portrait-zone.show { display:block; }
@@ -978,7 +978,7 @@ body {
 
       <!-- Card 1 -->
       <div class="feed-card" onclick="go('s-detail',1)">
-        <div style="width:100%;aspect-ratio:4/5;background:linear-gradient(160deg,#000000 0%,#001018 40%,#000d14 100%);position:relative;overflow:hidden;">
+        <div style="width:100%;aspect-ratio:4/5;background:linear-gradient(160deg,#000000 0%,#090909 40%,#080808 100%);position:relative;overflow:hidden;">
           <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:32px 20px;gap:10px;">
             <div style="align-self:flex-start;max-width:220px;">
               <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:4px;padding-left:4px;font-weight:500;">Seonghyeon</div>
@@ -1016,7 +1016,7 @@ body {
 
       <!-- Card 2 -->
       <div class="feed-card" onclick="go('s-detail',1)">
-        <div style="width:100%;aspect-ratio:4/5;background:linear-gradient(155deg,#000d10 0%,#001a22 50%,#000d14 100%);position:relative;overflow:hidden;">
+        <div style="width:100%;aspect-ratio:4/5;background:linear-gradient(155deg,#080808 0%,#0a0a0a 50%,#080808 100%);position:relative;overflow:hidden;">
           <div style="position:absolute;top:16px;left:16px;right:16px;display:flex;align-items:center;gap:8px;">
             <div style="width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.45);background:#D80C18;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">J</div>
             <span style="font-size:12px;font-weight:700;color:#fff;">jungkook ✦</span>
@@ -1051,7 +1051,7 @@ body {
       <!-- Card 3 -->
       <div class="feed-card" onclick="go('s-detail',1)">
         <div style="width:100%;aspect-ratio:4/5;background:#000;position:relative;overflow:hidden;">
-          <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 20%, rgba(0,40,55,0.8) 0%, #000 70%);"></div>
+          <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 20%, rgba(0,0,0,0.8) 0%, #000 70%);"></div>
           <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding:36px 20px;">
             <div style="font-size:56px;font-weight:200;color:#fff;letter-spacing:-2px;line-height:1;margin-bottom:4px;">02:17</div>
             <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:auto;font-weight:400;">Saturday, October 19</div>
@@ -1163,7 +1163,7 @@ body {
     <div class="divider" style="background:var(--border);height:1px;"></div>
 
     <div class="profile-grid">
-      <div class="grid-card" onclick="go('s-detail',1)" style="background:linear-gradient(155deg,#000000,#001218);">
+      <div class="grid-card" onclick="go('s-detail',1)" style="background:linear-gradient(155deg,#000000,#0a0a0a);">
         <div class="grid-placeholder" style="flex-direction:column;gap:6px;">
           <div style="font-size:11px;color:rgba(255,255,255,0.3);">Chat</div>
           <div style="width:60%;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;"></div>
@@ -1171,7 +1171,7 @@ body {
         </div>
         <div class="grid-type-badge c2-medium">iMsg</div>
       </div>
-      <div class="grid-card" onclick="go('s-detail',1)" style="background:linear-gradient(155deg,#1a0a2e,#2d1b4e);">
+      <div class="grid-card" onclick="go('s-detail',1)" style="background:linear-gradient(155deg,#111111,#1a1a1a);">
         <div class="grid-placeholder" style="flex-direction:column;gap:6px;">
           <div style="font-size:11px;color:rgba(255,255,255,0.3);">Story</div>
           <div style="width:55%;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;"></div>
@@ -1187,7 +1187,7 @@ body {
         </div>
         <div class="grid-type-badge c2-medium">Lock</div>
       </div>
-      <div class="grid-card" onclick="go('s-detail',1)" style="background:linear-gradient(155deg,#000000,#001218);">
+      <div class="grid-card" onclick="go('s-detail',1)" style="background:linear-gradient(155deg,#000000,#0a0a0a);">
         <div class="grid-placeholder" style="flex-direction:column;gap:6px;">
           <div style="width:65%;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;"></div>
           <div style="width:40%;height:6px;background:rgba(255,255,255,0.07);border-radius:3px;margin-left:25%;"></div>
@@ -1218,7 +1218,7 @@ body {
 <!-- ══ SCREEN 3: CREATE ══ -->
 <div class="screen active" id="s-create" style="justify-content:space-between;">
   <!-- 배경 블리드 -->
-  <div id="csl-bg" style="position:absolute;inset:0;z-index:0;pointer-events:none;transition:background .65s ease;background:radial-gradient(ellipse at 50% 40%, rgba(35,12,20,0.95), rgba(6,4,8,1));"></div>
+  <div id="csl-bg" style="position:absolute;inset:0;z-index:0;pointer-events:none;transition:background .65s ease;background:radial-gradient(ellipse at 50% 40%, rgba(10,10,10,0.95), rgba(0,0,0,1));"></div>
 
   <!-- 상단: 로고 + 타이틀 -->
   <div style="position:relative;z-index:2;padding:16px 24px 0;">
@@ -1265,7 +1265,7 @@ body {
     <div class="csl-slide" data-idx="1" data-dest="s-editor-story" style="--card-color:#6FDBFF;">
       <div class="csl-inner" style="background:#0f0a1a;overflow:hidden;position:relative;">
         <div style="position:absolute;top:12px;left:50%;transform:translateX(-50%);width:78px;height:22px;background:#000;border-radius:12px;z-index:10;"></div>
-        <div style="position:absolute;inset:0;background:linear-gradient(160deg,#1a0a2e 0%,#2d1040 45%,#0d0820 100%);"></div>
+        <div style="position:absolute;inset:0;background:linear-gradient(160deg,#111111 0%,#1a1a1a 45%,#0d0d0d 100%);"></div>
         <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 35%, rgba(255,107,53,0.22) 0%, transparent 65%);"></div>
         <div style="position:relative;z-index:5;padding:18px 20px 0;display:flex;justify-content:space-between;align-items:center;">
           <span style="font-size:10px;font-weight:600;color:#fff;letter-spacing:0;">9:41</span>
@@ -1414,7 +1414,7 @@ body {
   </div>
   <div class="scroll">
     <div class="detail-image-placeholder">
-      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%, rgba(59,191,232,0.25) 0%, transparent 70%);"></div>
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%, rgba(59,191,232,0.0) 0%, transparent 70%);"></div>
       <div class="detail-chat-preview">
         <div class="detail-bub recv b3-regular">i've been thinking about you all day</div>
         <div class="detail-bub sent b3-regular" style="align-self:flex-end;">stop saying things like that 🥺</div>
@@ -1489,8 +1489,8 @@ body {
   </div>
   <div class="scroll">
     <div class="profile-header">
-      <div class="profile-cover" style="background:linear-gradient(135deg,#1a0a2e 0%,#2d1b4e 50%,#1a1033 100%);">
-        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 40% 50%, rgba(111,219,255,0.25) 0%, transparent 70%);"></div>
+      <div class="profile-cover" style="background:linear-gradient(135deg,#111111 0%,#1a1a1a 50%,#111111 100%);">
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 40% 50%, rgba(111,219,255,0.0) 0%, transparent 70%);"></div>
       </div>
       <div class="profile-av-area">
         <div class="profile-av-big" style="font-size:26px;">🌙</div>
@@ -1940,8 +1940,8 @@ function makeDraggable(el) {
 
 // ─── TEMPLATE CAROUSEL ────────────────
 const CSL_DATA = [
-  { name:'Chat',     badge:'🔥 Most used', desc:'Classic chat + optional BG photo', dest:'s-editor',       color:'#6FDBFF', badgeBg:'rgba(111,219,255,0.15)', bg:'radial-gradient(ellipse at 50% 30%, rgba(0,30,40,0.95), rgba(0,0,0,1))' },
-  { name:'IG Story', badge:'✨ Trending',  desc:'Background photo + free text',     dest:'s-editor-story', color:'#6FDBFF', badgeBg:'rgba(111,219,255,0.15)', bg:'radial-gradient(ellipse at 50% 30%, rgba(0,20,30,0.97), rgba(0,0,0,1))' },
+  { name:'Chat',     badge:'🔥 Most used', desc:'Classic chat + optional BG photo', dest:'s-editor',       color:'#6FDBFF', badgeBg:'rgba(111,219,255,0.15)', bg:'radial-gradient(ellipse at 50% 30%, rgba(0,0,0,0.95), rgba(0,0,0,1))' },
+  { name:'IG Story', badge:'✨ Trending',  desc:'Background photo + free text',     dest:'s-editor-story', color:'#6FDBFF', badgeBg:'rgba(111,219,255,0.15)', bg:'radial-gradient(ellipse at 50% 30%, rgba(0,0,0,0.97), rgba(0,0,0,1))' },
 ];
 let cslIdx = 0;
 
