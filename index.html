@@ -1773,12 +1773,6 @@ function renderEditor() {
         bub.textContent = m.txt;
         row.appendChild(bub);
       }
-      if (isLast) {
-        const status = document.createElement('div');
-        status.className = 'imsg-status';
-        status.textContent = 'Delivered';
-        row.appendChild(status);
-      }
     } else {
       row.className = 'imsg-row recv';
       if (!prevSame) {
