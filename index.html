@@ -718,16 +718,17 @@ body {
 }
 .imsg-av {
   width:38px; height:38px; border-radius:50%; flex-shrink:0;
-  padding:2px; background:var(--accent-grad); cursor:pointer;
-  overflow:visible; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  position:relative;
 }
 .imsg-av-inner {
-  width:34px; height:34px; border-radius:50%;
-  background:linear-gradient(135deg,#6FDBFF,#3BBFE8);
+  width:38px; height:38px; border-radius:50%;
+  background:#C7C7CC;
   display:flex; align-items:center; justify-content:center;
-  font-size:13px; font-weight:700; color:#fff; overflow:hidden;
-  flex-shrink:0;
+  overflow:hidden; flex-shrink:0;
 }
+.imsg-av-inner.has-image { background:none; }
 .imsg-name-inp {
   background:none; border:none; outline:none;
   font-family:inherit; font-weight:700; font-size:15px;
@@ -1328,7 +1329,9 @@ body {
     </button>
     <div class="imsg-contact">
       <div class="imsg-av" onclick="document.getElementById('imsg-av-file').click()">
-        <div class="imsg-av-inner" id="imsg-av">S</div>
+        <div class="imsg-av-inner" id="imsg-av">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </div>
       </div>
       <input class="imsg-name-inp" id="artist-name" type="text" value="" maxlength="20" placeholder="Create name" oninput="syncArtistName(this.value)">
     </div>
@@ -1706,8 +1709,9 @@ function imsgSetAv(input) {
   const file = input.files[0]; if (!file) return;
   const url = URL.createObjectURL(file);
   // 헤더 아바타 업데이트
-  document.getElementById('imsg-av').innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
-  document.getElementById('imsg-av').style.background = 'none';
+  const av = document.getElementById('imsg-av');
+  av.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  av.classList.add('has-image');
   // 채팅 버블 아바타에도 동기화
   edAvUrl = url;
   renderEditor();
