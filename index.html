@@ -71,15 +71,20 @@ body {
    SCREENS
 ───────────────────────────────────── */
 .screen {
-  position:absolute; inset:0; display:none;
+  position:absolute; inset:0; display:flex;
   flex-direction:column; background:var(--base);
   overflow:hidden;
+  transform:translateX(100%);
+  pointer-events:none;
+  will-change:transform;
+  transition:transform .38s cubic-bezier(.4,0,.2,1);
 }
-.screen.active { display:flex; }
-.screen.enter { animation:slideIn .28s cubic-bezier(.32,1,.36,1) both; }
-.screen.back  { animation:slideBack .28s cubic-bezier(.32,1,.36,1) both; }
-@keyframes slideIn   { from{transform:translateX(100%)} to{transform:none} }
-@keyframes slideBack { from{transform:translateX(-20%)} to{transform:none} }
+.screen.active {
+  transform:translateX(0);
+  pointer-events:auto;
+}
+.screen.exit-fwd  { transform:translateX(-28%) !important; }
+.screen.exit-back { transform:translateX(100%) !important; }
 
 /* ─────────────────────────────────────
    BOTTOM NAV
@@ -1642,9 +1647,30 @@ function go(id, fwd) {
   const prev = document.querySelector('.screen.active');
   const next = document.getElementById(id);
   if (!next || prev === next) return;
-  prev.classList.remove('active');
-  next.classList.add('active', fwd ? 'enter' : 'back');
-  setTimeout(() => next.classList.remove('enter','back'), 300);
+
+  // next를 시작 위치에 두고 transition 잠깐 끔
+  next.style.transition = 'none';
+  next.style.transform = fwd ? 'translateX(100%)' : 'translateX(-28%)';
+  next.classList.add('active');
+
+  // 한 프레임 후 transition 켜고 동시에 슬라이드
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      next.style.transition = '';
+      next.style.transform = 'translateX(0)';
+      prev.style.transform = fwd ? 'translateX(-28%)' : 'translateX(100%)';
+      prev.style.pointerEvents = 'none';
+
+      const done = () => {
+        prev.classList.remove('active');
+        prev.style.transform = '';
+        prev.style.pointerEvents = '';
+        next.style.transform = '';
+        next.removeEventListener('transitionend', done);
+      };
+      next.addEventListener('transitionend', done, { once: true });
+    });
+  });
 }
 
 // ─── iMESSAGE EDITOR ────────────────
