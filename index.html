@@ -2071,19 +2071,26 @@ function edBgImg(input) {
 
   // scroll → detect centered card
   let scrollTimer;
+  function detectCenter() {
+    const slides = carousel.querySelectorAll('.csl-slide');
+    let closest = 0, minDist = Infinity;
+    slides.forEach((s, i) => {
+      const rect = s.getBoundingClientRect();
+      const dist = Math.abs(rect.left + rect.width / 2 - window.innerWidth / 2);
+      if (dist < minDist) { minDist = dist; closest = i; }
+    });
+    cslUpdate(closest);
+  }
+
+  // scrollend: snap 완료 직후 즉시 반응 (모던 브라우저)
+  carousel.addEventListener('scrollend', detectCenter, { passive: true });
+
+  // fallback: scrollend 미지원 환경용 (딜레이 최소화)
+  let scrollTimer;
   carousel.addEventListener('scroll', () => {
     clearTimeout(scrollTimer);
-    scrollTimer = setTimeout(() => {
-      const slides = carousel.querySelectorAll('.csl-slide');
-      let closest = 0, minDist = Infinity;
-      slides.forEach((s, i) => {
-        const rect = s.getBoundingClientRect();
-        const dist = Math.abs(rect.left + rect.width / 2 - window.innerWidth / 2);
-        if (dist < minDist) { minDist = dist; closest = i; }
-      });
-      cslUpdate(closest);
-    }, 60);
-  }, { passive:true });
+    scrollTimer = setTimeout(detectCenter, 30);
+  }, { passive: true });
 
   // tap on non-selected card → snap to it
   carousel.querySelectorAll('.csl-slide').forEach((s, i) => {
