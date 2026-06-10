@@ -753,11 +753,10 @@ body {
 .imsg-row.sent { align-items:flex-end; }
 .imsg-row.recv { align-items:flex-start; flex-direction:row; gap:6px; align-items:flex-end; }
 .imsg-recv-av {
-  width:24px; height:24px; border-radius:50%;
-  background:linear-gradient(135deg,#6FDBFF,#3BBFE8);
+  width:28px; height:28px; border-radius:50%;
+  background:#C7C7CC;
   display:flex; align-items:center; justify-content:center;
-  font-size:9px; font-weight:700; color:#fff; flex-shrink:0;
-  overflow:hidden;
+  flex-shrink:0; overflow:hidden;
 }
 .imsg-bub {
   padding:8px 12px; border-radius:18px; max-width:240px;
@@ -1804,12 +1803,12 @@ function renderEditor() {
           av.innerHTML = `<img src="${edAvUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
           av.style.background = 'none';
         } else {
-          av.textContent = (m.artist || 'A')[0].toUpperCase();
+          av.innerHTML = `<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="rgba(255,255,255,0.85)"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="rgba(255,255,255,0.85)"/></svg>`;
         }
         row.appendChild(av);
       } else {
         const spacer = document.createElement('div');
-        spacer.style.cssText = 'width:24px;flex-shrink:0;';
+        spacer.style.cssText = 'width:28px;flex-shrink:0;';
         row.appendChild(spacer);
       }
       if (m.type === 'img') {
