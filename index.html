@@ -1398,6 +1398,33 @@ body {
   </div>
 </div>
 
+<!-- ══ MESSAGE ACTION SHEET ══ -->
+<div id="msg-action-sheet" style="display:none;position:fixed;inset:0;z-index:9999;" onclick="closeMsgSheet()">
+  <div style="position:absolute;inset:0;background:rgba(0,0,0,0.3);"></div>
+  <div id="msg-action-inner" style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;padding:0 16px 32px;transition:transform .28s cubic-bezier(.25,.46,.45,.94);">
+    <div style="background:#fff;border-radius:16px;overflow:hidden;margin-bottom:10px;">
+      <button onclick="msgSheetEdit(event)" style="width:100%;padding:16px;border:none;background:none;font-family:inherit;font-size:17px;color:#000;letter-spacing:0;cursor:pointer;border-bottom:0.5px solid rgba(0,0,0,0.1);">Edit</button>
+      <button onclick="msgSheetDelete(event)" style="width:100%;padding:16px;border:none;background:none;font-family:inherit;font-size:17px;color:#FF3B30;letter-spacing:0;cursor:pointer;">Delete</button>
+    </div>
+    <button onclick="closeMsgSheet()" style="width:100%;padding:16px;border:none;background:#fff;border-radius:16px;font-family:inherit;font-size:17px;font-weight:700;color:#000;letter-spacing:0;cursor:pointer;">Cancel</button>
+  </div>
+</div>
+
+<!-- ══ MESSAGE EDIT SHEET ══ -->
+<div id="msg-edit-sheet" style="display:none;position:fixed;inset:0;z-index:10000;" onclick="closeMsgEdit()">
+  <div style="position:absolute;inset:0;background:rgba(0,0,0,0.3);"></div>
+  <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;padding:16px 16px 32px;" onclick="event.stopPropagation()">
+    <div style="background:#fff;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;">
+      <p style="font-size:13px;color:#8E8E93;text-align:center;letter-spacing:0;margin:0;">Edit message</p>
+      <textarea id="msg-edit-input" style="border:1px solid #E0E0E0;border-radius:10px;padding:10px 12px;font-family:inherit;font-size:15px;letter-spacing:0;resize:none;outline:none;min-height:72px;color:#000;" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+      <div style="display:flex;gap:8px;">
+        <button onclick="closeMsgEdit()" style="flex:1;padding:12px;border:1px solid #E0E0E0;border-radius:10px;background:#fff;font-family:inherit;font-size:15px;color:#8E8E93;cursor:pointer;letter-spacing:0;">Cancel</button>
+        <button onclick="confirmMsgEdit()" style="flex:1;padding:12px;border:none;border-radius:10px;background:#000;font-family:inherit;font-size:15px;font-weight:700;color:#fff;cursor:pointer;letter-spacing:0;">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ SCREEN 5: DETAIL VIEW ══ -->
 <div class="screen" id="s-detail">
   <div class="topbar" style="position:absolute;top:0;left:0;right:0;z-index:10;background:transparent;">
@@ -1745,13 +1772,45 @@ function edSend() {
   setTimeout(() => area.scrollTop = area.scrollHeight, 40);
 }
 
+let _sheetIdx = -1;
+
 function edEditMsg(i) {
   const m = edMsgs[i];
   if (m.type === 'img') return;
-  const newTxt = prompt('Edit message', m.txt);
-  if (newTxt === null) return;
-  if (newTxt.trim() === '') { edMsgs.splice(i, 1); }
-  else { edMsgs[i].txt = newTxt.trim(); }
+  _sheetIdx = i;
+  const sheet = document.getElementById('msg-action-sheet');
+  sheet.style.display = 'block';
+}
+
+function closeMsgSheet() {
+  document.getElementById('msg-action-sheet').style.display = 'none';
+}
+
+function msgSheetEdit(e) {
+  e.stopPropagation();
+  closeMsgSheet();
+  const input = document.getElementById('msg-edit-input');
+  input.value = edMsgs[_sheetIdx].txt;
+  const editSheet = document.getElementById('msg-edit-sheet');
+  editSheet.style.display = 'block';
+  setTimeout(() => { input.focus(); input.style.height = 'auto'; input.style.height = input.scrollHeight + 'px'; }, 100);
+}
+
+function msgSheetDelete(e) {
+  e.stopPropagation();
+  closeMsgSheet();
+  edMsgs.splice(_sheetIdx, 1);
+  renderEditor();
+}
+
+function closeMsgEdit() {
+  document.getElementById('msg-edit-sheet').style.display = 'none';
+}
+
+function confirmMsgEdit() {
+  const txt = document.getElementById('msg-edit-input').value.trim();
+  if (txt) edMsgs[_sheetIdx].txt = txt;
+  closeMsgEdit();
   renderEditor();
 }
 
