@@ -2081,16 +2081,8 @@ function edBgImg(input) {
     cslUpdate(closest);
   }
 
-  let scrollTimer;
-  carousel.addEventListener('scroll', () => {
-    clearTimeout(scrollTimer);
-    scrollTimer = setTimeout(detectCenter, 40);
-  }, { passive: true });
-
-  carousel.addEventListener('scrollend', () => {
-    clearTimeout(scrollTimer);
-    detectCenter();
-  }, { passive: true });
+  carousel.addEventListener('scroll', detectCenter, { passive: true });
+  carousel.addEventListener('scrollend', detectCenter, { passive: true });
 
   // tap on non-selected card → snap to it
   carousel.querySelectorAll('.csl-slide').forEach((s, i) => {
