@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Aulog</title>
+<title>chatfic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <style>
 /* ─────────────────────────────────────
    DARK THEME TOKENS
@@ -129,22 +131,27 @@ body {
 
 /* Logo */
 .logo {
-  font-size:22px; font-weight:800;
-  background:var(--accent-grad);
+  display:flex; align-items:center; gap:5px;
+  font-size:20px; font-weight:800;
+  letter-spacing:-0.4px; line-height:1;
+}
+.logo-text {
+  background:linear-gradient(90deg,#fff 0%,rgba(255,255,255,0.75) 100%);
   -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  letter-spacing:-0.5px;
 }
 
 /* ══════════════════════════════════════
    SCREEN 1 — DISCOVER FEED
 ══════════════════════════════════════ */
-.feed-list { display:flex; flex-direction:column; gap:1px; }
+.feed-list { display:flex; flex-direction:column; gap:12px; padding:0 16px 8px; }
 
 .feed-card {
   position:relative; overflow:hidden; cursor:pointer;
-  transition:opacity .15s;
+  border-radius:20px;
+  transition:transform .2s ease, opacity .15s;
+  background:var(--surface);
 }
-.feed-card:active { opacity:.85; }
+.feed-card:active { transform:scale(0.98); opacity:.9; }
 
 /* Card image */
 .feed-img {
@@ -165,7 +172,7 @@ body {
 
 /* Chat preview overlay on card */
 .feed-chat-overlay {
-  position:absolute; left:16px; right:16px; bottom:52px;
+  position:absolute; left:16px; right:16px; bottom:60px;
 }
 .feed-bubble {
   display:inline-block; padding:7px 12px; border-radius:14px;
@@ -176,35 +183,43 @@ body {
 .feed-bubble.sent { background:rgba(255,255,255,0.9); color:#191919; border-bottom-right-radius:3px; align-self:flex-end; margin-left:auto; display:block; text-align:left; }
 .feed-bubble-wrap { display:flex; flex-direction:column; }
 
-/* Card bottom meta */
+/* Card bottom meta — 카드 안 오버레이 아닌 별도 바 */
 .feed-meta {
-  position:absolute; bottom:0; left:0; right:0;
-  padding:10px 16px;
+  padding:12px 16px;
   display:flex; align-items:center; justify-content:space-between;
+  background:var(--surface);
 }
-.feed-user { display:flex; align-items:center; gap:8px; }
+.feed-user { display:flex; align-items:center; gap:10px; }
 .feed-user-av {
+  width:32px; height:32px; border-radius:50%;
+  background:var(--accent-grad);
+  padding:2px;
+  overflow:visible; display:flex; align-items:center; justify-content:center;
+}
+.feed-user-av-inner {
   width:28px; height:28px; border-radius:50%;
-  border:1.5px solid rgba(255,255,255,0.4);
-  overflow:hidden; background:var(--surface-3);
+  background:var(--surface-3); border:1.5px solid var(--base);
   display:flex; align-items:center; justify-content:center;
-  font-size:11px; font-weight:700; color:#fff;
+  font-size:11px; font-weight:700; color:#fff; overflow:hidden;
+  flex-shrink:0;
 }
 .feed-tag {
   display:inline-flex; align-items:center;
-  padding:3px 8px; border-radius:20px;
-  background:rgba(255,255,255,0.12);
-  backdrop-filter:blur(4px);
-  color:rgba(255,255,255,0.8);
+  padding:2px 8px; border-radius:20px;
+  background:var(--surface-3);
+  color:var(--text-3);
   margin-top:3px;
 }
-.feed-actions { display:flex; align-items:center; gap:12px; }
+.feed-actions { display:flex; align-items:center; gap:4px; }
 .feed-action-btn {
   display:flex; align-items:center; gap:5px;
-  background:none; border:none; cursor:pointer;
-  color:rgba(255,255,255,0.7); font-family:inherit;
+  background:var(--surface-2); border:none; cursor:pointer;
+  color:var(--text-2); font-family:inherit;
   font-feature-settings:'case' 1,'cpsp' 1,'ss03' 1;
+  padding:6px 12px; border-radius:20px;
+  transition:background .15s;
 }
+.feed-action-btn:active { background:var(--surface-3); }
 
 /* Story ring (gradient border) */
 .story-ring {
@@ -393,6 +408,110 @@ body {
 .prev-notif-time { font-size:7px; color:rgba(255,255,255,0.35); }
 
 /* ══════════════════════════════════════
+   TEMPLATE CAROUSEL (s-create)
+══════════════════════════════════════ */
+#tmpl-carousel::-webkit-scrollbar { display:none; }
+
+/* 배경 블리드 */
+#csl-bg {
+  position:absolute; top:52px; bottom:0; left:0; right:0;
+  z-index:0; pointer-events:none;
+  transition:background 0.65s ease;
+}
+
+.csl-slide {
+  flex-shrink:0;
+  width:228px;
+  height:420px;
+  scroll-snap-align:center;
+  border-radius:28px;
+  position:relative;
+  cursor:pointer;
+  transition:transform .35s cubic-bezier(.32,1,.36,1), opacity .35s ease;
+  transform:scale(0.88);
+  opacity:0.42;
+}
+.csl-slide.selected {
+  transform:scale(1);
+  opacity:1;
+}
+/* ring outline */
+.csl-slide.selected::before {
+  content:'';
+  position:absolute;
+  inset:-7px;
+  border-radius:35px;
+  background:#4A9EFF;
+  z-index:-1;
+  padding:3px;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+}
+/* glow */
+.csl-slide.selected::after {
+  content:'';
+  position:absolute;
+  inset:-10px;
+  border-radius:38px;
+  background:#4A9EFF;
+  filter:blur(20px);
+  opacity:0.30;
+  z-index:-2;
+}
+.csl-inner {
+  width:100%; height:100%;
+  border-radius:28px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+}
+
+/* dot indicators */
+.csl-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--text-4);
+  transition:width .25s ease, background .25s ease;
+}
+.csl-dot.on {
+  width:20px; border-radius:4px;
+  background:var(--text-2);
+}
+
+/* Start 버튼 — pill 스타일 */
+.btn-start {
+  width:100%; padding:17px 0;
+  border:none; border-radius:50px;
+  background:rgba(255,255,255,0.12);
+  color:#fff; cursor:pointer;
+  font-family:inherit;
+  font-feature-settings:'case' 1,'cpsp' 1,'ss03' 1;
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.18);
+  transition:background .2s ease, transform .15s ease;
+  letter-spacing:0;
+}
+.btn-start:hover { background:rgba(255,255,255,0.18); }
+.btn-start:active { transform:scale(0.97); }
+
+/* full-width gradient button */
+.btn-grad {
+  width:100%; padding:16px;
+  border:none; border-radius:12px;
+  background:var(--accent-grad);
+  color:#fff; cursor:pointer;
+  font-family:inherit;
+  font-feature-settings:'case' 1,'cpsp' 1,'ss03' 1;
+  transition:opacity .2s ease, transform .15s ease;
+}
+.btn-grad:hover { opacity:0.9; }
+.btn-grad:active { transform:scale(0.98); opacity:0.85; }
+.btn-full { width:100%; }
+
+/* ══════════════════════════════════════
    SCREEN 4 — POST DETAIL
 ══════════════════════════════════════ */
 .detail-image {
@@ -400,8 +519,10 @@ body {
   background:var(--surface); display:block;
 }
 .detail-image-placeholder {
-  width:100%; aspect-ratio:4/5;
+  width:calc(100% - 24px); aspect-ratio:9/16;
+  margin:12px auto 0;
   background:linear-gradient(155deg,#0f0f1a 0%,#1a1033 55%,#0d1f3c 100%);
+  border-radius:16px;
   display:flex; align-items:center; justify-content:center;
   flex-direction:column; gap:12px; position:relative; overflow:hidden;
 }
@@ -655,36 +776,63 @@ body {
 .imsg-bub.sent.tail { border-bottom-right-radius:4px; }
 .imsg-bub.recv.tail { border-bottom-left-radius:4px; }
 .imsg-status { font-size:11px; color:#8E8E93; margin-top:2px; padding-right:4px; letter-spacing:0; }
-/* Who toggle pill */
-.imsg-who-bar {
+/* Unified toolbar row (photo trigger + speaking as) */
+.imsg-toolbar-row {
   flex-shrink:0; background:#fff;
-  padding:6px 16px 4px;
+  padding:7px 16px 7px;
+  border-top:0.5px solid rgba(0,0,0,0.07);
+  display:flex; align-items:center; gap:8px;
+}
+#editor-photo-slot {
   display:flex; align-items:center; gap:6px;
 }
+.toolbar-photo-btn {
+  display:flex; align-items:center; gap:5px;
+  background:rgba(255,78,139,0.08); border:none; border-radius:20px;
+  padding:5px 10px 5px 8px; cursor:pointer; color:#FF4E8B;
+  font-family:inherit; font-feature-settings:'case' 1,'cpsp' 1,'ss03' 1;
+  font-size:11px; font-weight:600; letter-spacing:0;
+  transition:opacity .15s;
+}
+.toolbar-photo-btn:active { opacity:0.65; }
+.toolbar-sep { width:1px; height:14px; background:rgba(0,0,0,0.09); flex-shrink:0; }
+/* Who toggle pill */
 .imsg-who-pill {
   display:flex; border-radius:20px; overflow:hidden;
-  border:1px solid #E5E5EA;
+  background:#F2F2F7; padding:2px; gap:0;
 }
 .imsg-who-opt {
-  padding:4px 14px; font-size:12px; font-weight:600;
-  background:none; border:none; cursor:pointer;
+  padding:3px 12px; font-size:12px; font-weight:600;
+  background:transparent; border:none; cursor:pointer;
   font-family:inherit; letter-spacing:0; color:#8E8E93;
-  transition:all .15s;
+  border-radius:20px; transition:all .15s;
   font-feature-settings:'case' 1,'cpsp' 1,'ss03' 1;
 }
-.imsg-who-opt.on { background:#0B93F6; color:#fff; }
+.imsg-who-opt.on {
+  background:#fff; color:#191919;
+  box-shadow:0 1px 3px rgba(0,0,0,0.12);
+}
 /* Input bar */
 .imsg-input-bar {
   flex-shrink:0; background:#fff;
-  border-top:.5px solid rgba(0,0,0,0.15);
-  padding:8px 12px 28px;
-  display:flex; align-items:flex-end; gap:8px;
+  border-top:0.5px solid rgba(0,0,0,0.08);
+  padding:8px 16px 28px;
+  display:flex; align-items:flex-end; gap:10px;
 }
+/* 사진 추가 버튼 */
+.imsg-photo-btn {
+  width:36px; height:36px; border-radius:50%; flex-shrink:0;
+  background:rgba(0,0,0,0.05); border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  color:#8E8E93; transition:background .15s, color .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.imsg-photo-btn:active { background:rgba(0,0,0,0.1); }
 .imsg-input-wrap {
-  flex:1; display:flex; align-items:flex-end;
-  border:1px solid #C7C7CC; border-radius:20px;
-  background:#fff; padding:6px 10px 6px 14px;
-  min-height:36px;
+  flex:1; display:flex; align-items:center;
+  border:0.5px solid rgba(0,0,0,0.14); border-radius:22px;
+  background:#fff; padding:5px 6px 5px 14px;
+  min-height:34px;
 }
 .imsg-textarea {
   flex:1; background:none; border:none; outline:none;
@@ -695,7 +843,7 @@ body {
 .imsg-textarea::placeholder { color:#C7C7CC; }
 .imsg-send-btn {
   width:28px; height:28px; border-radius:50%;
-  background:#C7C7CC; border:none; cursor:pointer;
+  background:rgba(0,0,0,0.1); border:none; cursor:pointer;
   display:flex; align-items:center; justify-content:center;
   transition:background .15s; flex-shrink:0;
   -webkit-tap-highlight-color:transparent;
@@ -706,6 +854,98 @@ body {
   font-family:inherit; font-feature-settings:'case' 1,'cpsp' 1,'ss03' 1;
   color:#007AFF; font-size:17px; font-weight:600; letter-spacing:0;
   -webkit-tap-highlight-color:transparent;
+}
+
+/* ─── EDITOR: BG CHAT MODE ─── */
+.editor-bg-mode { background:#060a08 !important; }
+.editor-bg-mode .imsg-header {
+  background:rgba(8,14,10,0.97) !important;
+  border-bottom:.5px solid rgba(255,255,255,0.07) !important;
+}
+.editor-bg-mode .imsg-back svg path { stroke:rgba(255,255,255,0.65) !important; }
+.editor-bg-mode .imsg-name-inp { color:#fff !important; }
+.editor-bg-mode .imsg-msgs {
+  background:#060a08;
+  background-size:cover;
+  background-position:center;
+}
+.editor-bg-mode .imsg-msgs > * { position:relative; z-index:1; }
+.editor-bg-mode .imsg-bub.recv {
+  background:rgba(255,255,255,0.11) !important; color:#fff !important;
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+}
+.editor-bg-mode .imsg-bub.sent {
+  background:rgba(255,255,255,0.88) !important; color:#191919 !important;
+}
+.editor-bg-mode .imsg-ts { color:rgba(255,255,255,0.28) !important; }
+.editor-bg-mode .imsg-status { color:rgba(255,255,255,0.28) !important; }
+.editor-bg-mode .imsg-recv-av { opacity:0.85; }
+.editor-bg-mode .imsg-toolbar-row {
+  background:rgba(8,14,10,0.95) !important;
+  border-top-color:rgba(255,255,255,0.07) !important;
+}
+.editor-bg-mode .imsg-toolbar-row > span { color:rgba(255,255,255,0.35) !important; }
+.editor-bg-mode .imsg-who-pill { background:rgba(255,255,255,0.08) !important; }
+.editor-bg-mode .imsg-who-opt { color:rgba(255,255,255,0.28) !important; }
+.editor-bg-mode .imsg-who-opt.on {
+  background:rgba(255,255,255,0.14) !important;
+  color:#fff !important;
+  box-shadow:none !important;
+}
+.editor-bg-mode .toolbar-sep { background:rgba(255,255,255,0.1) !important; }
+.editor-bg-mode .imsg-input-bar {
+  background:rgba(8,14,10,0.97) !important;
+  border-top-color:rgba(255,255,255,0.07) !important;
+}
+.editor-bg-mode .imsg-photo-btn {
+  background:rgba(255,255,255,0.08) !important;
+  color:rgba(255,255,255,0.45) !important;
+}
+.editor-bg-mode .imsg-input-wrap {
+  border-color:rgba(255,255,255,0.13) !important;
+  background:rgba(255,255,255,0.05) !important;
+}
+.editor-bg-mode .imsg-textarea { color:#fff !important; }
+.editor-bg-mode .imsg-textarea::placeholder { color:rgba(255,255,255,0.22) !important; }
+.editor-bg-mode .imsg-send-btn { background:rgba(255,255,255,0.12) !important; }
+.editor-bg-mode .imsg-send-btn.active { background:rgba(0,201,167,0.85) !important; }
+
+/* BG 업로드 힌트 (메시지 영역 안) */
+#editor-bg-hint {
+  display:none; position:absolute; inset:0;
+  flex-direction:column; align-items:center; justify-content:center; gap:8px;
+  z-index:2; cursor:pointer;
+}
+#editor-bg-hint.show { display:flex; }
+
+/* editor-tmpl-bar: 레거시, 숨김 처리 */
+#editor-tmpl-bar { display:none !important; height:0; overflow:hidden; padding:0; }
+
+/* ─── EDITOR: PORTRAIT MODE ─── */
+#editor-portrait-zone {
+  flex-shrink:0; display:none;
+  height:180px; position:relative; overflow:hidden;
+  background:linear-gradient(160deg,#180a2c,#271046,#140d28);
+  cursor:pointer;
+}
+#editor-portrait-zone.show { display:block; }
+#editor-portrait-bg {
+  position:absolute; inset:0;
+  background-size:cover; background-position:center top;
+}
+#editor-portrait-grad {
+  position:absolute; inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,0.1) 0%,rgba(0,0,0,0.55) 100%);
+}
+#editor-portrait-hint {
+  position:absolute; inset:0; z-index:3;
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column; gap:6px;
+}
+#editor-portrait-hint.hidden { display:none; }
+#editor-portrait-namebar {
+  position:absolute; bottom:12px; left:0; right:0;
+  text-align:center; z-index:4; pointer-events:none;
 }
 
 /* TOAST */
@@ -726,160 +966,158 @@ body {
 
 <!-- ══ SCREEN 1: DISCOVER ══ -->
 <div class="screen" id="s-home">
-  <div class="topbar" style="background:var(--base);">
-    <div class="logo">aulog</div>
-    <button style="width:32px;height:32px;border:none;background:var(--surface-2);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;" onclick="toast('알림 기능은 준비 중이에요 🔔')">
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0" stroke="rgba(255,255,255,0.6)" stroke-width="1.8" stroke-linecap="round"/></svg>
+  <div class="topbar" style="background:var(--base);padding:0 20px;">
+    <div class="logo">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" style="flex-shrink:0;">
+        <defs><linearGradient id="lg2" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#FF4E8B"/><stop offset="100%" stop-color="#B24BF3"/></linearGradient></defs>
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="url(#lg2)" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+      <span class="logo-text" style="font-size:18px;font-weight:800;">chatfic</span>
+    </div>
+    <button style="width:36px;height:36px;border:none;background:var(--surface-2);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;" onclick="toast('알림 기능은 준비 중이에요 🔔')">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0" stroke="rgba(255,255,255,0.55)" stroke-width="1.8" stroke-linecap="round"/></svg>
     </button>
   </div>
 
-  <div class="scroll">
-    <!-- Feed cards -->
+  <!-- 섹션 헤더 -->
+  <div style="padding:4px 20px 12px;display:flex;align-items:baseline;gap:8px;">
+    <span style="font-size:22px;font-weight:800;color:var(--text-1);letter-spacing:-0.3px;">For You</span>
+    <span class="b5-regular" style="color:var(--text-3);">· today</span>
+  </div>
+
+  <div class="scroll" style="padding-top:0;">
     <div class="feed-list">
 
-      <!-- Card 1: iMessage style -->
+      <!-- Card 1 -->
       <div class="feed-card" onclick="go('s-detail',1)">
         <div style="width:100%;aspect-ratio:4/5;background:linear-gradient(160deg,#0f0c1a 0%,#1a0f2e 40%,#0d1520 100%);position:relative;overflow:hidden;">
-          <!-- Simulated iMessage on dark bg -->
           <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:32px 20px;gap:10px;">
             <div style="align-self:flex-start;max-width:220px;">
-              <div style="font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:4px;padding-left:4px;">Seonghyeon</div>
-              <div style="background:rgba(255,255,255,0.13);backdrop-filter:blur(10px);padding:10px 14px;border-radius:16px;border-bottom-left-radius:3px;color:#fff;font-size:13px;line-height:1.4;">
-                i've been thinking about you all day
-              </div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:4px;padding-left:4px;font-weight:500;">Seonghyeon</div>
+              <div style="background:rgba(255,255,255,0.13);backdrop-filter:blur(10px);padding:10px 14px;border-radius:16px;border-bottom-left-radius:3px;color:#fff;font-size:13px;line-height:1.4;">i've been thinking about you all day</div>
             </div>
             <div style="align-self:flex-end;max-width:220px;">
-              <div style="font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:4px;text-align:right;padding-right:4px;">you</div>
-              <div style="background:rgba(255,255,255,0.88);padding:10px 14px;border-radius:16px;border-bottom-right-radius:3px;color:#191919;font-size:13px;line-height:1.4;">
-                stop saying things like that 🥺
-              </div>
+              <div style="background:rgba(255,255,255,0.88);padding:10px 14px;border-radius:16px;border-bottom-right-radius:3px;color:#191919;font-size:13px;line-height:1.4;">stop saying things like that 🥺</div>
             </div>
             <div style="align-self:flex-start;max-width:220px;">
-              <div style="background:rgba(255,255,255,0.13);backdrop-filter:blur(10px);padding:10px 14px;border-radius:16px;border-bottom-left-radius:3px;color:#fff;font-size:13px;line-height:1.4;">
-                why? does it make your heart race? 😏
-              </div>
+              <div style="background:rgba(255,255,255,0.13);backdrop-filter:blur(10px);padding:10px 14px;border-radius:16px;border-bottom-left-radius:3px;color:#fff;font-size:13px;line-height:1.4;">why? does it make your heart race? 😏</div>
             </div>
           </div>
-          <div style="position:absolute;bottom:16px;left:0;right:0;text-align:center;">
-            <span style="font-size:9px;color:rgba(255,255,255,0.2);">full story on </span>
-            <strong style="font-size:9px;color:rgba(255,255,255,0.45);">Bunjang Global</strong>
+          <!-- 워터마크 -->
+          <div style="position:absolute;bottom:14px;left:0;right:0;text-align:center;">
+            <span style="font-size:9px;color:rgba(255,255,255,0.18);">full story on </span>
+            <strong style="font-size:9px;color:rgba(255,255,255,0.38);font-weight:700;">chatfic</strong>
           </div>
         </div>
-        <div class="feed-meta" style="position:relative;padding:10px 16px;background:var(--surface);border-top:1px solid var(--border);">
+        <div class="feed-meta">
           <div class="feed-user">
-            <div class="feed-user-av">H</div>
+            <div class="feed-user-av">
+              <div class="feed-user-av-inner">H</div>
+            </div>
             <div>
               <p class="b5-medium" style="color:var(--text-1);">@hana_world</p>
-              <span class="c2-medium" style="padding:2px 8px;border-radius:20px;background:rgba(255,78,139,0.12);color:var(--accent);">#seonghyeon</span>
+              <span class="c2-medium feed-tag">#seonghyeon</span>
             </div>
           </div>
-          <div class="feed-actions">
-            <button class="feed-action-btn t6-bold">
-              <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="rgba(255,255,255,0.5)" stroke-width="1.8"/></svg>
-              2.4k
-            </button>
-          </div>
+          <button class="feed-action-btn c1-medium">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="currentColor" stroke-width="1.8"/></svg>
+            2.4k
+          </button>
         </div>
       </div>
 
-      <!-- Card 2: IG Story style -->
+      <!-- Card 2 -->
       <div class="feed-card" onclick="go('s-detail',1)">
         <div style="width:100%;aspect-ratio:4/5;background:linear-gradient(155deg,#1a0a2e 0%,#2d1b4e 50%,#0d1f3c 100%);position:relative;overflow:hidden;">
-          <div style="position:absolute;top:14px;left:14px;right:14px;display:flex;align-items:center;gap:8px;">
-            <div style="width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.5);background:#D80C18;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">J</div>
-            <span style="font-size:11px;font-weight:700;color:#fff;">jungkook ✦</span>
-            <span style="margin-left:auto;font-size:9px;color:rgba(255,255,255,0.45);">2h ago</span>
+          <div style="position:absolute;top:16px;left:16px;right:16px;display:flex;align-items:center;gap:8px;">
+            <div style="width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.45);background:#D80C18;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">J</div>
+            <span style="font-size:12px;font-weight:700;color:#fff;">jungkook ✦</span>
+            <span style="margin-left:auto;font-size:10px;color:rgba(255,255,255,0.4);font-weight:500;">2h ago</span>
           </div>
           <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:56px 20px 40px;gap:10px;">
-            <div style="background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);padding:10px 14px;border-radius:14px;border-bottom-left-radius:3px;color:#fff;font-size:13px;line-height:1.4;max-width:230px;">
-              you looked beautiful tonight
-            </div>
-            <div style="background:rgba(255,255,255,0.88);padding:10px 14px;border-radius:14px;border-bottom-right-radius:3px;color:#191919;font-size:13px;line-height:1.4;max-width:230px;align-self:flex-end;">
-              i thought you didn't notice me 😶
-            </div>
-            <div style="background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);padding:10px 14px;border-radius:14px;border-bottom-left-radius:3px;color:#fff;font-size:13px;line-height:1.4;max-width:230px;">
-              i always notice you
-            </div>
+            <div style="background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);padding:10px 14px;border-radius:14px;border-bottom-left-radius:3px;color:#fff;font-size:13px;line-height:1.4;max-width:230px;">you looked beautiful tonight</div>
+            <div style="background:rgba(255,255,255,0.88);padding:10px 14px;border-radius:14px;border-bottom-right-radius:3px;color:#191919;font-size:13px;line-height:1.4;max-width:230px;align-self:flex-end;">i thought you didn't notice me 😶</div>
+            <div style="background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);padding:10px 14px;border-radius:14px;border-bottom-left-radius:3px;color:#fff;font-size:13px;line-height:1.4;max-width:230px;">i always notice you</div>
           </div>
-          <div style="position:absolute;bottom:12px;left:0;right:0;text-align:center;">
-            <span style="font-size:9px;color:rgba(255,255,255,0.2);">full story on </span>
-            <strong style="font-size:9px;color:rgba(255,255,255,0.45);">Bunjang Global</strong>
+          <div style="position:absolute;bottom:14px;left:0;right:0;text-align:center;">
+            <strong style="font-size:9px;color:rgba(255,255,255,0.35);font-weight:700;">chatfic</strong>
           </div>
         </div>
-        <div class="feed-meta" style="position:relative;padding:10px 16px;background:var(--surface);border-top:1px solid var(--border);">
+        <div class="feed-meta">
           <div class="feed-user">
-            <div class="feed-user-av" style="background:linear-gradient(135deg,#FF4E8B,#B24BF3);">S</div>
+            <div class="feed-user-av" style="background:linear-gradient(135deg,#FF4E8B,#B24BF3);">
+              <div class="feed-user-av-inner">S</div>
+            </div>
             <div>
               <p class="b5-medium" style="color:var(--text-1);">@sora_bts</p>
-              <span class="c2-medium" style="padding:2px 8px;border-radius:20px;background:rgba(178,75,243,0.12);color:var(--accent-2);">#jungkook</span>
+              <span class="c2-medium feed-tag">#jungkook</span>
             </div>
           </div>
-          <div class="feed-actions">
-            <button class="feed-action-btn t6-bold">
-              <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="rgba(255,255,255,0.5)" stroke-width="1.8"/></svg>
-              5.1k
-            </button>
-          </div>
+          <button class="feed-action-btn c1-medium">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="currentColor" stroke-width="1.8"/></svg>
+            5.1k
+          </button>
         </div>
       </div>
 
-      <!-- Card 3: Lock screen style -->
+      <!-- Card 3 -->
       <div class="feed-card" onclick="go('s-detail',1)">
         <div style="width:100%;aspect-ratio:4/5;background:#000;position:relative;overflow:hidden;">
           <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 20%, rgba(50,30,80,0.8) 0%, #000 70%);"></div>
-          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding:32px 20px;">
-            <div style="font-size:52px;font-weight:200;color:#fff;letter-spacing:-2px;line-height:1;margin-bottom:4px;">02:17</div>
-            <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:auto;">Saturday, October 19</div>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding:36px 20px;">
+            <div style="font-size:56px;font-weight:200;color:#fff;letter-spacing:-2px;line-height:1;margin-bottom:4px;">02:17</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:auto;font-weight:400;">Saturday, October 19</div>
             <div style="width:100%;display:flex;flex-direction:column;gap:8px;">
-              <div style="background:rgba(35,35,45,0.85);backdrop-filter:blur(20px);border-radius:14px;padding:10px 12px;display:flex;gap:9px;align-items:center;">
+              <div style="background:rgba(28,28,36,0.85);backdrop-filter:blur(20px);border-radius:16px;padding:10px 12px;display:flex;gap:9px;align-items:center;">
                 <div style="width:24px;height:24px;border-radius:7px;background:#25D366;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
                 </div>
                 <div style="flex:1;">
-                  <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.9);margin-bottom:2px;">Seonghyeon</div>
-                  <div style="font-size:11px;color:rgba(255,255,255,0.5);">can't sleep. are you awake?</div>
+                  <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.9);margin-bottom:1px;">Seonghyeon</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,0.45);">can't sleep. are you awake?</div>
                 </div>
-                <div style="font-size:9px;color:rgba(255,255,255,0.3);">now</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.25);font-weight:500;">now</div>
               </div>
-              <div style="background:rgba(35,35,45,0.85);backdrop-filter:blur(20px);border-radius:14px;padding:10px 12px;display:flex;gap:9px;align-items:center;">
+              <div style="background:rgba(28,28,36,0.85);backdrop-filter:blur(20px);border-radius:16px;padding:10px 12px;display:flex;gap:9px;align-items:center;">
                 <div style="width:24px;height:24px;border-radius:7px;background:#25D366;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
                 </div>
                 <div style="flex:1;">
-                  <div style="font-size:11px;color:rgba(255,255,255,0.5);">i miss you</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,0.45);">i miss you</div>
                 </div>
-                <div style="font-size:9px;color:rgba(255,255,255,0.3);">now</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.25);font-weight:500;">now</div>
               </div>
             </div>
           </div>
         </div>
-        <div class="feed-meta" style="position:relative;padding:10px 16px;background:var(--surface);border-top:1px solid var(--border);">
+        <div class="feed-meta">
           <div class="feed-user">
-            <div class="feed-user-av" style="background:linear-gradient(135deg,#4ECAFF,#4BF3B2);">M</div>
+            <div class="feed-user-av" style="background:linear-gradient(135deg,#4ECAFF,#4BF3B2);">
+              <div class="feed-user-av-inner">M</div>
+            </div>
             <div>
               <p class="b5-medium" style="color:var(--text-1);">@mia_nct</p>
-              <span class="c2-medium" style="padding:2px 8px;border-radius:20px;background:rgba(78,202,255,0.12);color:#4ECAFF;">#seonghyeon</span>
+              <span class="c2-medium feed-tag">#seonghyeon</span>
             </div>
           </div>
-          <div class="feed-actions">
-            <button class="feed-action-btn t6-bold">
-              <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="rgba(255,255,255,0.5)" stroke-width="1.8"/></svg>
-              8.8k
-            </button>
-          </div>
+          <button class="feed-action-btn c1-medium">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="currentColor" stroke-width="1.8"/></svg>
+            8.8k
+          </button>
         </div>
       </div>
 
-    </div><!-- /feed-list -->
-  </div><!-- /scroll -->
+      <div style="height:8px;"></div>
+    </div>
+  </div>
 
-  <!-- Bottom Nav: Feed active -->
-  <div class="bottom-nav">
+  <!-- Bottom Nav -->
+  <div class="bottom-nav" style="height:64px;padding:0 8px 12px;">
     <button class="nav-item" onclick="go('s-create',0)">
       <div class="nav-icon"><svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M12 20h9" stroke="rgba(255,255,255,0.35)" stroke-width="1.8" stroke-linecap="round"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="rgba(255,255,255,0.35)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <span class="c2-medium nav-label">Create</span>
     </button>
-    <button class="nav-item on" onclick="">
+    <button class="nav-item on">
       <div class="nav-icon"><svg width="22" height="22" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="var(--accent)" stroke-width="1.8"/><path d="m21 21-4.35-4.35" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/></svg></div>
       <span class="c2-medium nav-label" style="color:var(--accent);">Feed</span>
     </button>
@@ -990,112 +1228,103 @@ body {
 </div>
 
 <!-- ══ SCREEN 3: CREATE ══ -->
-<div class="screen active" id="s-create">
-  <div class="topbar" style="background:var(--base);">
-    <div class="logo">aulog</div>
-    <div class="topbar-spacer"></div>
-  </div>
-  <div class="scroll">
-    <div class="create-header">
-      <p class="h4-bold" style="color:var(--text-1);margin-bottom:4px;">Make your AU 💌</p>
-      <p class="b3-regular" style="color:var(--text-2);line-height:1.5;">Pick a template and start your story.</p>
+<div class="screen active" id="s-create" style="justify-content:space-between;">
+  <!-- 배경 블리드 -->
+  <div id="csl-bg" style="position:absolute;inset:0;z-index:0;pointer-events:none;transition:background .65s ease;background:radial-gradient(ellipse at 50% 40%, rgba(35,12,20,0.95), rgba(6,4,8,1));"></div>
+
+  <!-- 상단: 로고 + 타이틀 -->
+  <div style="position:relative;z-index:2;padding:16px 24px 0;">
+    <div class="logo" style="margin-bottom:20px;">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" style="flex-shrink:0;">
+        <defs><linearGradient id="lg1" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#FF4E8B"/><stop offset="100%" stop-color="#B24BF3"/></linearGradient></defs>
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="url(#lg1)" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+      <span class="logo-text" style="font-size:18px;font-weight:800;">chatfic</span>
     </div>
-    <div class="template-list">
+    <p style="font-family:inherit;font-weight:800;font-size:36px;color:#fff;line-height:1.05;letter-spacing:-0.5px;">Make your<br>AU</p>
+    <p style="color:rgba(255,255,255,0.38);margin-top:10px;font-size:13px;font-weight:400;letter-spacing:0;">Swipe to pick a template</p>
+  </div>
 
-      <!-- iMessage -->
-      <div class="tmpl-card hot" onclick="go('s-editor',1)">
-        <div class="tmpl-preview">
-          <div class="prev-imsg">
-            <div class="prev-imsg-bar">
-              <div class="prev-imsg-av">S</div>
-              <div>
-                <p style="font-size:9px;font-weight:700;color:#191919;">Seonghyeon</p>
-                <p style="font-size:8px;color:#8C8C8C;">Chat · Today</p>
-              </div>
-            </div>
-            <div class="imsg-brow"><div class="imsg-bub recv">i've been thinking about you</div></div>
-            <div class="imsg-brow r"><div class="imsg-bub sent">stop 😭</div></div>
-            <div class="imsg-brow"><div class="imsg-bub recv">never 😏</div></div>
-            <div class="prev-wm">
-              <span style="font-size:7px;color:#B2B2B2;">full story on </span>
-              <strong style="font-size:7px;color:#D80C18;">Bunjang Global</strong>
-            </div>
+  <!-- 캐러셀 -->
+  <div id="tmpl-carousel" style="position:relative;z-index:2;display:flex;overflow-x:scroll;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;gap:16px;padding:24px 66px 8px;scrollbar-width:none;-ms-overflow-style:none;flex-shrink:0;">
+
+    <!-- Card 0: Chat -->
+    <div class="csl-slide selected" data-idx="0" data-dest="s-editor" style="--card-color:#FF4E8B;">
+      <div class="csl-inner" style="background:#F7F7F8;">
+        <div style="position:absolute;top:12px;left:50%;transform:translateX(-50%);width:78px;height:22px;background:#000;border-radius:12px;z-index:10;"></div>
+        <div style="padding:18px 20px 0;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:10px;font-weight:600;color:#191919;letter-spacing:0;">9:41</span>
+          <div style="display:flex;gap:4px;align-items:center;">
+            <div style="display:flex;gap:1.5px;align-items:flex-end;"><div style="width:2.5px;height:5px;background:rgba(0,0,0,0.25);border-radius:1px;"></div><div style="width:2.5px;height:7px;background:rgba(0,0,0,0.25);border-radius:1px;"></div><div style="width:2.5px;height:9px;background:#191919;border-radius:1px;"></div><div style="width:2.5px;height:11px;background:#191919;border-radius:1px;"></div></div>
+            <div style="width:14px;height:8px;border:1.5px solid rgba(0,0,0,0.35);border-radius:2px;position:relative;margin-left:2px;"><div style="position:absolute;right:-3px;top:50%;transform:translateY(-50%);width:2px;height:5px;background:rgba(0,0,0,0.35);border-radius:0 1px 1px 0;"></div><div style="width:8px;height:4px;background:#191919;border-radius:1px;margin:1px;"></div></div>
           </div>
         </div>
-        <div class="tmpl-info">
-          <div class="tmpl-badge badge-hot c2-medium">🔥 Most used</div>
-          <p class="t4-bold" style="color:var(--text-1);">Chat</p>
-          <p class="b5-regular" style="color:var(--text-3);margin-top:2px;">Classic chat conversation style</p>
+        <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:.5px solid rgba(0,0,0,0.07);">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#FF4E8B,#B24BF3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;">S</div>
+          <div><div style="font-size:12px;font-weight:700;color:#191919;letter-spacing:0;">Seonghyeon</div><div style="font-size:9px;color:#8C8C8C;letter-spacing:0;">Chat · Today</div></div>
         </div>
-      </div>
-
-      <!-- IG Story -->
-      <div class="tmpl-card" onclick="go('s-editor-story',1)">
-        <div class="tmpl-preview">
-          <div class="prev-story">
-            <div class="prev-story-head">
-              <div class="prev-story-av">J</div>
-              <span style="font-size:9px;font-weight:700;color:#fff;">jungkook</span>
-              <span style="margin-left:auto;font-size:8px;color:rgba(255,255,255,0.4);">2h</span>
-            </div>
-            <div class="prev-story-msgs">
-              <div class="prev-story-bub l">you looked beautiful tonight</div>
-              <div class="prev-story-bub r">i thought you didn't see me 🥺</div>
-              <div class="prev-story-bub l">i always see you</div>
-            </div>
-            <div style="text-align:center;margin-top:auto;">
-              <span style="font-size:7px;color:rgba(255,255,255,0.2);">full story on </span>
-              <strong style="font-size:7px;color:rgba(255,255,255,0.4);">Bunjang Global</strong>
-            </div>
-          </div>
+        <div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px;flex:1;">
+          <div style="align-self:flex-start;background:#E9E9EB;padding:9px 13px;border-radius:16px;border-bottom-left-radius:4px;font-size:12px;color:#191919;max-width:185px;letter-spacing:0;">i've been thinking about you all day</div>
+          <div style="align-self:flex-end;background:#1C1C1E;padding:9px 13px;border-radius:16px;border-bottom-right-radius:4px;font-size:12px;color:#fff;letter-spacing:0;">stop 🥺</div>
+          <div style="align-self:flex-start;background:#E9E9EB;padding:9px 13px;border-radius:16px;border-bottom-left-radius:4px;font-size:12px;color:#191919;letter-spacing:0;max-width:176px;">does it make your heart race? 😏</div>
+          <div style="align-self:flex-end;background:#1C1C1E;padding:9px 13px;border-radius:16px;border-bottom-right-radius:4px;font-size:12px;color:#fff;letter-spacing:0;">maybe… 💜</div>
         </div>
-        <div class="tmpl-info">
-          <div class="tmpl-badge badge-new c2-medium">✨ Trending</div>
-          <p class="t4-bold" style="color:var(--text-1);">IG Story</p>
-          <p class="b5-regular" style="color:var(--text-3);margin-top:2px;">Cinematic 9:16 format</p>
-        </div>
-      </div>
-
-      <!-- Lock screen -->
-      <div class="tmpl-card" onclick="go('s-editor',1)">
-        <div class="tmpl-preview">
-          <div class="prev-lock">
-            <div class="prev-lock-bg"></div>
-            <div class="prev-lock-time b6-regular" style="font-weight:200;">02:17</div>
-            <div class="prev-lock-date c2-medium">Saturday, October 19</div>
-            <div class="prev-notif">
-              <div class="prev-notif-app">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
-              </div>
-              <div class="prev-notif-body">
-                <div class="prev-notif-sender">Seonghyeon</div>
-                <div class="prev-notif-msg">can't sleep. are you awake?</div>
-              </div>
-              <div class="prev-notif-time">now</div>
-            </div>
-            <div class="prev-notif">
-              <div class="prev-notif-app">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
-              </div>
-              <div class="prev-notif-body">
-                <div class="prev-notif-msg">i miss you</div>
-              </div>
-              <div class="prev-notif-time">now</div>
-            </div>
-          </div>
-        </div>
-        <div class="tmpl-info">
-          <div class="c2-medium" style="margin-bottom:6px;color:var(--text-3);">🌙 Night vibe</div>
-          <p class="t4-bold" style="color:var(--text-1);">Lock Screen</p>
-          <p class="b5-regular" style="color:var(--text-3);margin-top:2px;">Late night message notification</p>
-        </div>
+        <div style="padding:10px 14px;border-top:.5px solid rgba(0,0,0,0.07);"><div style="flex:1;background:#EBEBEB;border-radius:22px;padding:8px 14px;font-size:11px;color:#B2B2B2;letter-spacing:0;">Message</div></div>
+        <div style="display:flex;justify-content:center;padding:6px 0 8px;"><div style="width:80px;height:4px;background:rgba(0,0,0,0.12);border-radius:2px;"></div></div>
       </div>
     </div>
-    <div style="height:32px;"></div>
+
+    <!-- Card 1: IG Story -->
+    <div class="csl-slide" data-idx="1" data-dest="s-editor-story" style="--card-color:#FF6B35;">
+      <div class="csl-inner" style="background:#0f0a1a;overflow:hidden;position:relative;">
+        <div style="position:absolute;top:12px;left:50%;transform:translateX(-50%);width:78px;height:22px;background:#000;border-radius:12px;z-index:10;"></div>
+        <div style="position:absolute;inset:0;background:linear-gradient(160deg,#1a0a2e 0%,#2d1040 45%,#0d0820 100%);"></div>
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 35%, rgba(255,107,53,0.22) 0%, transparent 65%);"></div>
+        <div style="position:relative;z-index:5;padding:18px 20px 0;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:10px;font-weight:600;color:#fff;letter-spacing:0;">9:41</span>
+          <div style="display:flex;gap:4px;align-items:center;"><div style="display:flex;gap:1.5px;align-items:flex-end;"><div style="width:2.5px;height:5px;background:rgba(255,255,255,0.35);border-radius:1px;"></div><div style="width:2.5px;height:7px;background:rgba(255,255,255,0.35);border-radius:1px;"></div><div style="width:2.5px;height:9px;background:#fff;border-radius:1px;"></div><div style="width:2.5px;height:11px;background:#fff;border-radius:1px;"></div></div><div style="width:14px;height:8px;border:1.5px solid rgba(255,255,255,0.45);border-radius:2px;position:relative;margin-left:2px;"><div style="position:absolute;right:-3px;top:50%;transform:translateY(-50%);width:2px;height:5px;background:rgba(255,255,255,0.45);border-radius:0 1px 1px 0;"></div><div style="width:8px;height:4px;background:#fff;border-radius:1px;margin:1px;"></div></div></div>
+        </div>
+        <div style="position:relative;z-index:5;padding:10px 14px 0;display:flex;align-items:center;gap:7px;">
+          <div style="width:26px;height:26px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.55);background:linear-gradient(135deg,#FF6B35,#FF4E8B);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;">J</div>
+          <span style="font-size:11px;font-weight:700;color:#fff;letter-spacing:0;">jungkook</span>
+          <span style="font-size:9px;color:rgba(255,255,255,0.4);margin-left:auto;letter-spacing:0;">now</span>
+        </div>
+        <div style="position:relative;z-index:4;flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;padding:16px 0;">
+          <div style="font-size:24px;opacity:0.35;">🖼️</div>
+          <span style="font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0;">background photo</span>
+        </div>
+        <div style="position:relative;z-index:5;padding:0 18px;display:flex;flex-direction:column;gap:8px;">
+          <div style="align-self:flex-start;font-size:13px;font-weight:800;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,0.8);letter-spacing:0;">you looked beautiful tonight</div>
+          <div style="align-self:flex-end;background:rgba(255,255,255,0.88);padding:7px 11px;border-radius:12px;border-bottom-right-radius:3px;font-size:11px;color:#191919;letter-spacing:0;max-width:155px;">i thought you didn't see me 🥺</div>
+          <div style="align-self:flex-start;background:rgba(255,255,255,0.13);backdrop-filter:blur(8px);padding:7px 11px;border-radius:12px;border-bottom-left-radius:3px;font-size:11px;color:#fff;letter-spacing:0;">i always see you</div>
+        </div>
+        <div style="display:flex;justify-content:center;padding:10px 0;position:relative;z-index:5;"><div style="width:80px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;"></div></div>
+      </div>
+    </div>
+
+  </div><!-- /carousel -->
+
+  <!-- 템플릿 정보 + CTA -->
+  <div style="position:relative;z-index:2;padding:0 24px 20px;flex-shrink:0;">
+    <!-- 템플릿 이름 + 설명 -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+      <span id="csl-badge" style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:rgba(255,78,139,0.15);color:#FF4E8B;letter-spacing:0;">🔥 Most used</span>
+    </div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;">
+      <span id="csl-name" style="font-family:inherit;font-weight:800;font-size:22px;color:#fff;letter-spacing:-0.2px;">Chat</span>
+      <!-- 닷 인디케이터 -->
+      <div style="display:flex;gap:5px;align-items:center;" id="csl-dots">
+        <div class="csl-dot on"></div>
+        <div class="csl-dot"></div>
+      </div>
+    </div>
+    <p id="csl-desc" style="font-size:13px;color:rgba(255,255,255,0.38);letter-spacing:0;margin-bottom:20px;">Classic chat conversation style</p>
+    <button class="btn-start t1-bold" id="csl-cta" onclick="cslGo()" style="font-family:inherit;font-weight:800;font-size:17px;">Start →</button>
   </div>
+
   <!-- Bottom Nav: Create active -->
-  <div class="bottom-nav">
-    <button class="nav-item on" onclick="">
+  <div class="bottom-nav" style="position:relative;height:64px;padding:0 8px 12px;flex-shrink:0;">
+    <button class="nav-item on">
       <div class="nav-icon"><svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M12 20h9" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <span class="c2-medium nav-label" style="color:var(--accent);">Create</span>
     </button>
@@ -1122,35 +1351,63 @@ body {
       <div class="imsg-av" onclick="document.getElementById('imsg-av-file').click()">
         <div class="imsg-av-inner" id="imsg-av">S</div>
       </div>
-      <input class="imsg-name-inp" id="artist-name" type="text" value="Seonghyeon" maxlength="20" placeholder="Artist name">
+      <input class="imsg-name-inp" id="artist-name" type="text" value="" maxlength="20" placeholder="Create name" oninput="syncArtistName(this.value)">
     </div>
-    <button onclick="go('s-detail',1)" style="width:32px;height:32px;border-radius:50%;background:var(--accent-grad);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;-webkit-tap-highlight-color:transparent;">
-      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <button onclick="go('s-detail',1)" style="width:40px;height:40px;border-radius:50%;background:#4C6EF5;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;-webkit-tap-highlight-color:transparent;transition:opacity 0.2s ease;box-shadow:0 2px 12px rgba(76,110,245,0.45);" onmousedown="this.style.opacity='.75'" onmouseup="this.style.opacity='1'" ontouchstart="this.style.opacity='.75'" ontouchend="this.style.opacity='1'">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
   </div>
   <input type="file" id="imsg-av-file" accept="image/*" style="display:none" onchange="imsgSetAv(this)">
+  <input type="file" id="editor-portrait-file" accept="image/*" style="display:none" onchange="edPortraitImg(this)">
+  <input type="file" id="editor-bg-file" accept="image/*" style="display:none" onchange="edBgImg(this)">
+
+  <!-- Portrait zone (Portrait 템플릿 선택 시 노출) -->
+  <div id="editor-portrait-zone" onclick="document.getElementById('editor-portrait-file').click()">
+    <div id="editor-portrait-bg"></div>
+    <div id="editor-portrait-grad"></div>
+    <div id="editor-portrait-hint">
+      <div style="font-size:28px;opacity:0.38;">🖼️</div>
+      <p class="b5-medium" style="color:rgba(255,255,255,0.38);">Tap to add portrait photo</p>
+    </div>
+    <div id="editor-portrait-namebar">
+      <span class="t4-bold" id="editor-portrait-name" style="color:#fff;text-shadow:0 2px 12px rgba(0,0,0,0.65);">Seonghyeon</span>
+    </div>
+  </div>
 
   <!-- Messages -->
   <div class="imsg-msgs" id="editor-msgs">
+    <!-- BG photo hint (BG Chat 템플릿 선택 시) -->
+    <div id="editor-bg-hint" onclick="document.getElementById('editor-bg-file').click()">
+      <div style="font-size:32px;opacity:0.35;">🌅</div>
+      <p class="b5-medium" style="color:rgba(255,255,255,0.32);">Tap to add background photo</p>
+    </div>
     <div class="imsg-ts">Today</div>
     <div style="text-align:center;padding:24px 0 8px;">
       <span style="font-size:13px;color:#C7C7CC;letter-spacing:0;">Start writing your story ✍️</span>
     </div>
   </div>
 
-  <!-- Who toggle -->
-  <div class="imsg-who-bar">
-    <span style="font-size:12px;color:#8E8E93;letter-spacing:0;">Speaking as</span>
+  <!-- 통합 툴바: 포토 트리거(선택) + Speaking as -->
+  <div class="imsg-toolbar-row">
+    <div id="editor-photo-slot"></div>
+    <span class="c1-medium" style="color:#8E8E93;letter-spacing:0;">as</span>
     <div class="imsg-who-pill">
       <button class="imsg-who-opt on" id="ed-tab-a" onclick="edPick('a')">You</button>
-      <button class="imsg-who-opt" id="ed-tab-b" onclick="edPick('b')" id="imsg-tab-b">Seonghyeon</button>
+      <button class="imsg-who-opt" id="ed-tab-b" onclick="edPick('b')">Name</button>
     </div>
   </div>
+  <!-- 레거시 tmpl-bar (JS 참조 호환용, 숨김) -->
+  <div id="editor-tmpl-bar"></div>
 
   <!-- Input bar -->
+  <input type="file" id="chat-img-file" accept="image/*" style="display:none" onchange="edAddImg(this)">
   <div class="imsg-input-bar">
-    <button style="width:32px;height:32px;border-radius:50%;background:#E9E9EB;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="#8E8E93" stroke-width="2.2" stroke-linecap="round"/></svg>
+    <button class="imsg-photo-btn" onclick="document.getElementById('chat-img-file').click()">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" stroke-width="1.7"/>
+        <circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.7"/>
+        <path d="M8 5l1.5-2h5L16 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </button>
     <div class="imsg-input-wrap">
       <textarea class="imsg-textarea" id="ed-input" placeholder="Message" rows="1" oninput="autoGrow(this);imsgInputChange(this)"></textarea>
@@ -1407,6 +1664,7 @@ function go(id, fwd) {
 // ─── iMESSAGE EDITOR ────────────────
 let edWho = 'a';
 const edMsgs = [];
+let edAvUrl = null; // 프로필 이미지 URL 저장
 
 function edPick(k) {
   edWho = k;
@@ -1431,8 +1689,28 @@ function imsgInputChange(el) {
 function imsgSetAv(input) {
   const file = input.files[0]; if (!file) return;
   const url = URL.createObjectURL(file);
+  // 헤더 아바타 업데이트
   document.getElementById('imsg-av').innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
   document.getElementById('imsg-av').style.background = 'none';
+  // 채팅 버블 아바타에도 동기화
+  edAvUrl = url;
+  renderEditor();
+}
+
+function edAddImg(input) {
+  const file = input.files[0]; if (!file) return;
+  const url = URL.createObjectURL(file);
+  const artistName = document.getElementById('artist-name').value || 'Artist';
+  edMsgs.push({ who: edWho, type: 'img', url, artist: artistName });
+  input.value = '';
+  renderEditor();
+  const area = document.getElementById('editor-msgs');
+  setTimeout(() => area.scrollTop = area.scrollHeight, 40);
+}
+
+function syncArtistName(val) {
+  const name = val.trim() || 'Name';
+  document.getElementById('ed-tab-b').textContent = name;
 }
 
 function edSend() {
@@ -1460,39 +1738,58 @@ function renderEditor() {
     const isLast = i === edMsgs.length - 1;
     const prevSame = i > 0 && edMsgs[i-1].who === m.who;
 
+    const row = document.createElement('div');
+
     if (isSent) {
-      const row = document.createElement('div');
       row.className = 'imsg-row sent';
-      const bub = document.createElement('div');
-      bub.className = 'imsg-bub sent' + (isLast ? ' tail' : '');
-      bub.textContent = m.txt;
-      row.appendChild(bub);
+      if (m.type === 'img') {
+        const img = document.createElement('img');
+        img.src = m.url;
+        img.style.cssText = 'max-width:200px;border-radius:16px;border-bottom-right-radius:4px;display:block;';
+        row.appendChild(img);
+      } else {
+        const bub = document.createElement('div');
+        bub.className = 'imsg-bub sent' + (isLast ? ' tail' : '');
+        bub.textContent = m.txt;
+        row.appendChild(bub);
+      }
       if (isLast) {
         const status = document.createElement('div');
         status.className = 'imsg-status';
         status.textContent = 'Delivered';
         row.appendChild(status);
       }
-      area.appendChild(row);
     } else {
-      const row = document.createElement('div');
       row.className = 'imsg-row recv';
       if (!prevSame) {
         const av = document.createElement('div');
         av.className = 'imsg-recv-av';
-        av.textContent = (m.artist || 'A')[0].toUpperCase();
+        if (edAvUrl) {
+          av.innerHTML = `<img src="${edAvUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+          av.style.background = 'none';
+        } else {
+          av.textContent = (m.artist || 'A')[0].toUpperCase();
+        }
         row.appendChild(av);
       } else {
         const spacer = document.createElement('div');
         spacer.style.cssText = 'width:24px;flex-shrink:0;';
         row.appendChild(spacer);
       }
-      const bub = document.createElement('div');
-      bub.className = 'imsg-bub recv' + (isLast ? ' tail' : '');
-      bub.textContent = m.txt;
-      row.appendChild(bub);
-      area.appendChild(row);
+      if (m.type === 'img') {
+        const img = document.createElement('img');
+        img.src = m.url;
+        img.style.cssText = 'max-width:200px;border-radius:16px;border-bottom-left-radius:4px;display:block;';
+        row.appendChild(img);
+      } else {
+        const bub = document.createElement('div');
+        bub.className = 'imsg-bub recv' + (isLast ? ' tail' : '');
+        bub.textContent = m.txt;
+        row.appendChild(bub);
+      }
     }
+
+    area.appendChild(row);
   });
 }
 
@@ -1654,6 +1951,131 @@ function makeDraggable(el) {
   el.addEventListener('mousedown', onStart);
   el.addEventListener('touchstart', onStart, {passive:true});
 }
+
+// ─── TEMPLATE CAROUSEL ────────────────
+const CSL_DATA = [
+  { name:'Chat',     badge:'🔥 Most used', desc:'Classic chat + optional BG photo', dest:'s-editor',       color:'#FF4E8B', badgeBg:'rgba(255,78,139,0.15)', bg:'radial-gradient(ellipse at 50% 30%, rgba(35,12,20,0.92), rgba(8,5,10,0.99))' },
+  { name:'IG Story', badge:'✨ Trending',  desc:'Background photo + free text',     dest:'s-editor-story', color:'#FF6B35', badgeBg:'rgba(255,107,53,0.15)', bg:'radial-gradient(ellipse at 50% 30%, rgba(40,12,8,0.94), rgba(8,4,3,0.99))' },
+];
+let cslIdx = 0;
+
+function cslUpdate(idx) {
+  cslIdx = idx;
+  const slides = document.querySelectorAll('.csl-slide');
+  const dots   = document.querySelectorAll('.csl-dot');
+  slides.forEach((s, i) => s.classList.toggle('selected', i === idx));
+  dots.forEach((d, i) => d.classList.toggle('on', i === idx));
+  const d = CSL_DATA[idx];
+  document.getElementById('csl-name').textContent  = d.name;
+  document.getElementById('csl-badge').textContent = d.badge;
+  document.getElementById('csl-desc').textContent  = d.desc;
+  // 배지 색상 + 배경 블리드 업데이트
+  const badge = document.getElementById('csl-badge');
+  badge.style.background = d.badgeBg;
+  badge.style.color = d.color;
+  const bg = document.getElementById('csl-bg');
+  if (bg) bg.style.background = d.bg;
+}
+
+function cslGo() {
+  initEditor(cslIdx);
+  go(CSL_DATA[cslIdx].dest, 1);
+}
+
+function initEditor(tmplIdx) {
+  const editor = document.getElementById('s-editor');
+  const tmpl = CSL_DATA[tmplIdx];
+  const artistName = document.getElementById('artist-name').value || 'Artist';
+
+  // 초기화
+  editor.classList.remove('editor-bg-mode');
+  document.getElementById('editor-portrait-zone').classList.remove('show');
+  document.getElementById('editor-bg-hint').classList.remove('show');
+  // 통합 photo slot 초기화
+  document.getElementById('editor-photo-slot').innerHTML = '';
+
+  // Portrait name sync
+  document.getElementById('editor-portrait-name').textContent = artistName;
+
+  const photoSVG = `<svg width="12" height="12" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><polyline points="21 15 16 10 5 21" stroke="currentColor" stroke-width="1.8"/></svg>`;
+
+  if (tmpl.name === 'Chat') {
+    // BG 사진 선택 옵션 — 작은 버튼으로 툴바에 삽입
+    document.getElementById('editor-photo-slot').innerHTML = `
+      <button class="toolbar-photo-btn" onclick="document.getElementById('editor-bg-file').click()">${photoSVG} BG photo</button>
+      <div class="toolbar-sep"></div>`;
+
+  } else if (tmpl.name === 'Portrait') {
+    document.getElementById('editor-portrait-zone').classList.add('show');
+    document.getElementById('editor-photo-slot').innerHTML = `
+      <button class="toolbar-photo-btn" style="background:rgba(155,111,255,0.08);color:#9B6FFF;" onclick="document.getElementById('editor-portrait-file').click()">${photoSVG} Portrait</button>
+      <div class="toolbar-sep"></div>`;
+  }
+}
+
+function edPortraitImg(input) {
+  const file = input.files[0]; if (!file) return;
+  const url = URL.createObjectURL(file);
+  document.getElementById('editor-portrait-bg').style.backgroundImage = `url(${url})`;
+  document.getElementById('editor-portrait-hint').classList.add('hidden');
+}
+
+function edBgImg(input) {
+  const file = input.files[0]; if (!file) return;
+  const url = URL.createObjectURL(file);
+  const msgs = document.getElementById('editor-msgs');
+  // 그라디언트 dim + 이미지 멀티 레이어
+  msgs.style.background = `linear-gradient(rgba(4,8,6,0.55), rgba(4,8,6,0.55)), url(${url}) center / cover no-repeat`;
+  document.getElementById('editor-bg-hint').classList.remove('show');
+  // BG 업로드 시 에디터 다크 모드로 전환
+  document.getElementById('s-editor').classList.add('editor-bg-mode');
+  // photo slot → "Change BG" (다크 전환 후에도 버튼 유지)
+  const photoSVG2 = `<svg width="12" height="12" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><polyline points="21 15 16 10 5 21" stroke="currentColor" stroke-width="1.8"/></svg>`;
+  document.getElementById('editor-photo-slot').innerHTML = `
+    <button class="toolbar-photo-btn" style="background:rgba(255,78,139,0.15);color:#FF6B9D;" onclick="document.getElementById('editor-bg-file').click()">${photoSVG2} Change BG</button>
+    <div class="toolbar-sep" style="background:rgba(255,255,255,0.1);"></div>`;
+}
+
+(function initCarousel() {
+  const carousel = document.getElementById('tmpl-carousel');
+  if (!carousel) return;
+
+  // scroll → detect centered card
+  let scrollTimer;
+  carousel.addEventListener('scroll', () => {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => {
+      const slides = carousel.querySelectorAll('.csl-slide');
+      let closest = 0, minDist = Infinity;
+      slides.forEach((s, i) => {
+        const rect = s.getBoundingClientRect();
+        const dist = Math.abs(rect.left + rect.width / 2 - window.innerWidth / 2);
+        if (dist < minDist) { minDist = dist; closest = i; }
+      });
+      cslUpdate(closest);
+    }, 60);
+  }, { passive:true });
+
+  // tap on non-selected card → snap to it
+  carousel.querySelectorAll('.csl-slide').forEach((s, i) => {
+    s.addEventListener('click', () => {
+      if (i !== cslIdx) {
+        s.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' });
+        cslUpdate(i);
+      }
+    });
+  });
+
+  // initial position: Chat(index 0)을 중앙으로 스냅
+  requestAnimationFrame(() => {
+    const slides = carousel.querySelectorAll('.csl-slide');
+    if (slides[0]) {
+      const offset = slides[0].offsetLeft - (carousel.offsetWidth - slides[0].offsetWidth) / 2;
+      carousel.scrollLeft = offset;
+    }
+    cslUpdate(0);
+  });
+})();
 
 // Toast
 function toast(msg) {
