@@ -1651,8 +1651,8 @@ function go(id, fwd) {
   if (!next || prev === next) return;
   _transitioning = true;
 
-  const inX  = fwd ? '100%'  : '-30%';
-  const outX = fwd ? '-30%'  : '100%';
+  const inX  = fwd ? '100%'  : '-18%';
+  const outX = fwd ? '-18%'  : '100%';
 
   // next 초기 위치 세팅 (transition OFF)
   next.style.transition = 'none';
@@ -1677,8 +1677,13 @@ function go(id, fwd) {
 
       next.addEventListener('transitionend', () => {
         prev.classList.remove('active');
-        prev.style.cssText = '';
-        next.style.cssText = '';
+        prev.style.transition = '';
+        prev.style.transform  = '';
+        prev.style.opacity    = '';
+        prev.style.pointerEvents = '';
+        next.style.transition = '';
+        next.style.transform  = '';
+        next.style.opacity    = '';
         _transitioning = false;
       }, { once: true });
     });
