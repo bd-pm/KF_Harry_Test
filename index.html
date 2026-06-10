@@ -74,17 +74,17 @@ body {
   position:absolute; inset:0; display:flex;
   flex-direction:column; background:var(--base);
   overflow:hidden;
-  transform:translateX(100%);
+  transform:translate3d(100%, 0, 0);
+  opacity:0;
   pointer-events:none;
-  will-change:transform;
-  transition:transform .38s cubic-bezier(.4,0,.2,1);
+  will-change:transform, opacity;
+  transition:transform .42s cubic-bezier(.25,.46,.45,.94), opacity .42s cubic-bezier(.25,.46,.45,.94);
 }
 .screen.active {
-  transform:translateX(0);
+  transform:translate3d(0, 0, 0);
+  opacity:1;
   pointer-events:auto;
 }
-.screen.exit-fwd  { transform:translateX(-28%) !important; }
-.screen.exit-back { transform:translateX(100%) !important; }
 
 /* ─────────────────────────────────────
    BOTTOM NAV
@@ -1643,32 +1643,44 @@ body {
 
 <script>
 // Navigation
+let _transitioning = false;
 function go(id, fwd) {
+  if (_transitioning) return;
   const prev = document.querySelector('.screen.active');
   const next = document.getElementById(id);
   if (!next || prev === next) return;
+  _transitioning = true;
 
-  // next를 시작 위치에 두고 transition 잠깐 끔
+  const inX  = fwd ? '100%'  : '-30%';
+  const outX = fwd ? '-30%'  : '100%';
+
+  // next 초기 위치 세팅 (transition OFF)
   next.style.transition = 'none';
-  next.style.transform = fwd ? 'translateX(100%)' : 'translateX(-28%)';
+  next.style.transform  = `translate3d(${inX}, 0, 0)`;
+  next.style.opacity    = '0';
   next.classList.add('active');
 
-  // 한 프레임 후 transition 켜고 동시에 슬라이드
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      next.style.transition = '';
-      next.style.transform = 'translateX(0)';
-      prev.style.transform = fwd ? 'translateX(-28%)' : 'translateX(100%)';
+      const dur = '0.45s';
+      const ease = 'cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+      const t = `transform ${dur} ${ease}, opacity ${dur} ${ease}`;
+
+      next.style.transition = t;
+      next.style.transform  = 'translate3d(0,0,0)';
+      next.style.opacity    = '1';
+
+      prev.style.transition    = t;
+      prev.style.transform     = `translate3d(${outX}, 0, 0)`;
+      prev.style.opacity       = '0';
       prev.style.pointerEvents = 'none';
 
-      const done = () => {
+      next.addEventListener('transitionend', () => {
         prev.classList.remove('active');
-        prev.style.transform = '';
-        prev.style.pointerEvents = '';
-        next.style.transform = '';
-        next.removeEventListener('transitionend', done);
-      };
-      next.addEventListener('transitionend', done, { once: true });
+        prev.style.cssText = '';
+        next.style.cssText = '';
+        _transitioning = false;
+      }, { once: true });
     });
   });
 }
