@@ -1299,9 +1299,6 @@ body {
   <!-- 템플릿 정보 + CTA -->
   <div style="position:relative;z-index:2;padding:0 24px 20px;flex-shrink:0;">
     <!-- 템플릿 이름 + 설명 -->
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-      <span id="csl-badge" style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:rgba(111,219,255,0.15);color:#6FDBFF;letter-spacing:0;">🔥 Most used</span>
-    </div>
     <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;">
       <span id="csl-name" style="font-family:inherit;font-weight:800;font-size:22px;color:#fff;letter-spacing:-0.2px;">Chat</span>
       <!-- 닷 인디케이터 -->
@@ -1996,12 +1993,7 @@ function cslUpdate(idx) {
   dots.forEach((d, i) => d.classList.toggle('on', i === idx));
   const d = CSL_DATA[idx];
   document.getElementById('csl-name').textContent  = d.name;
-  document.getElementById('csl-badge').textContent = d.badge;
   document.getElementById('csl-desc').textContent  = d.desc;
-  // 배지 색상 + 배경 블리드 업데이트
-  const badge = document.getElementById('csl-badge');
-  badge.style.background = d.badgeBg;
-  badge.style.color = d.color;
   const bg = document.getElementById('csl-bg');
   if (bg) bg.style.background = d.bg;
 }
