@@ -1307,7 +1307,6 @@ body {
         <div class="csl-dot"></div>
       </div>
     </div>
-    <p id="csl-desc" style="font-size:13px;color:rgba(255,255,255,0.38);letter-spacing:0;margin-bottom:20px;">Classic chat conversation style</p>
     <button class="btn-start t1-bold" id="csl-cta" onclick="cslGo()" style="font-family:inherit;font-weight:800;font-size:17px;">Start →</button>
   </div>
 
@@ -1993,7 +1992,6 @@ function cslUpdate(idx) {
   dots.forEach((d, i) => d.classList.toggle('on', i === idx));
   const d = CSL_DATA[idx];
   document.getElementById('csl-name').textContent  = d.name;
-  document.getElementById('csl-desc').textContent  = d.desc;
   const bg = document.getElementById('csl-bg');
   if (bg) bg.style.background = d.bg;
 }
