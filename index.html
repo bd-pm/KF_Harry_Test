@@ -2069,27 +2069,27 @@ function edBgImg(input) {
   const carousel = document.getElementById('tmpl-carousel');
   if (!carousel) return;
 
-  // scroll → detect centered card
-  let scrollTimer;
   function detectCenter() {
+    const cw = carousel.offsetWidth;
+    const cx = carousel.scrollLeft + cw / 2;
     const slides = carousel.querySelectorAll('.csl-slide');
     let closest = 0, minDist = Infinity;
     slides.forEach((s, i) => {
-      const rect = s.getBoundingClientRect();
-      const dist = Math.abs(rect.left + rect.width / 2 - window.innerWidth / 2);
+      const dist = Math.abs((s.offsetLeft + s.offsetWidth / 2) - cx);
       if (dist < minDist) { minDist = dist; closest = i; }
     });
     cslUpdate(closest);
   }
 
-  // scrollend: snap 완료 직후 즉시 반응 (모던 브라우저)
-  carousel.addEventListener('scrollend', detectCenter, { passive: true });
-
-  // fallback: scrollend 미지원 환경용 (딜레이 최소화)
   let scrollTimer;
   carousel.addEventListener('scroll', () => {
     clearTimeout(scrollTimer);
-    scrollTimer = setTimeout(detectCenter, 30);
+    scrollTimer = setTimeout(detectCenter, 40);
+  }, { passive: true });
+
+  carousel.addEventListener('scrollend', () => {
+    clearTimeout(scrollTimer);
+    detectCenter();
   }, { passive: true });
 
   // tap on non-selected card → snap to it
@@ -2097,17 +2097,16 @@ function edBgImg(input) {
     s.addEventListener('click', () => {
       if (i !== cslIdx) {
         s.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' });
-        cslUpdate(i);
+        setTimeout(() => cslUpdate(i), 300);
       }
     });
   });
 
-  // initial position: Chat(index 0)을 중앙으로 스냅
+  // 초기 위치
   requestAnimationFrame(() => {
     const slides = carousel.querySelectorAll('.csl-slide');
     if (slides[0]) {
-      const offset = slides[0].offsetLeft - (carousel.offsetWidth - slides[0].offsetWidth) / 2;
-      carousel.scrollLeft = offset;
+      carousel.scrollLeft = slides[0].offsetLeft - (carousel.offsetWidth - slides[0].offsetWidth) / 2;
     }
     cslUpdate(0);
   });
